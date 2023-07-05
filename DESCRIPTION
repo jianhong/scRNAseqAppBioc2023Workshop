@@ -33,7 +33,7 @@ Suggests:
     knitr,
     rmarkdown,
     pkgdown
-URL: https://jianhong.github.io/scRNAseqApp_Bioc2023Workshop/
-BugReports: https://github.com/jianhong/scRNAseqApp_Bioc2023Workshop/issues/new/choose
+URL: https://jianhong.github.io/scRNAseqAppBioc2023Workshop/
+BugReports: https://github.com/jianhong/scRNAseqAppBioc2023Workshop/issues/new/choose
 VignetteBuilder: knitr
-DockerImage: ghcr.io/jianhong/scrnaseqapp_bioc2023workshop
+DockerImage: ghcr.io/jianhong/scRNAseqAppBioc2023Workshop
