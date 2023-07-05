@@ -1,4 +1,4 @@
-Package: scRNAseqApp_Bioc2023Workshop
+Package: scRNAseqAppBioc2023Workshop
 Title: scRNAseqApp demo package for Bioc2023
 Version: 0.99.0
 Authors@R: 
