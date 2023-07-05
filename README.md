@@ -1,52 +1,54 @@
-# BuildABiocWorkshop
+# Package demo for scRNAseqApp
 
-This package is a template for building a Bioconductor workshop. The package
-includes Github actions to:
+Authors:
+    Jianhong Ou^[Regeneration Center, Duke University, Durham, North Carolina, USA.].
+    <br/>
+Last modified: `r Sys.Date()`.
 
-1. Set up bioconductor/bioconductor_docker:devel on Github resources
-2. Install package dependencies for your package (based on the `DESCRIPTION` file)
-3. Run `rcmdcheck::rcmdcheck`
-4. Build a pkgdown website and push it to github pages
-5. Build a docker image with the installed package and dependencies and deploy to [the Github Container Repository](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#pulling-container-images) at the name `ghcr.io/gihub_user/repo_name`, all lowercase. 
+## Overview
 
-## Responsibilities
+### Description
 
-Package authors are primarily responsible for:
+Single-cell RNA sequencing (scRNA-seq) is a powerful technique to study gene expression, cellular heterogeneity, and cell states within samples in single-cell level. The development of scRNA-seq shed light to address the knowledge gap about the cell types, cell interactions, and key genes involved in biological process and their dynamics. To precisely meet the publishing requirement, reduce the time of communication the bioinformatician with researchers, and increase the re-usability and reproducibility of scientific findings, multiple interactive visualization tools were developed to provide the researchers access to the details of the data. Based on ShinyCell, the scRNAseqApp package is developed with multiple highly interactive visualizations of how cells and subsets of cells cluster behavior for scRNA-seq, scATAC-seq and sc-multiomics data. The end users can discover the expression of genes in multiple interactive manners with highly customized filter conditions by selecting metadata supplied with the publications and download the ready-to-use results for republishing.
 
-1. Creating a landing site of their choosing for their workshops (a website). This website should be listed in the `DESCRIPTION` file as the `URL`.
-2. Creating a docker image that will contain workshop materials and the installed packages necessary to run those materials. The name of the resulting docker image, including "tag" if desired, should be listed in a non-standard tag, `DockerImage:` in the `DESCRIPTION` file. 
+### Pre-requisites
 
-Both of those tasks can be accomplished using the Github actions included in this template package. The vignette accompanying this package describes how to accomplish both of these tasks.
+* Basic knowledge of R syntax
+* Basic knowledge of Docker
+* Basic knowledge of shell commands
+* Basic knowledge of Shiny
+* A computer with internet connection
 
-## Details
+### Participation
 
-For detailed instructions, see the `How to build a workshop` article/vignette.
+Attendance must be familiarity with scRNAseq analysis and know the data
+structure of [Seurat](https://satijalab.org/seurat/) object.
 
-## Results of successful deployment
+### _R_ / _Bioconductor_ packages used
 
-- A working docker image that contains the installed package and dependencies.
-- An up-to-date `pkgdown` website at https://YOURUSERNAME.github.io/YOURREPOSITORYNAME/
-- Docker image will be tagged with `latest`, `sha-XXXXXX` where `XXXXXX` is the hash of the current `master` commit, and `master`. 
+* [_scRNAseqApp_](https://bioconductor.org/packages/scRNAseqApp/)
 
-## To use the resulting image:
+### Time outline
 
-```sh
-docker run -e PASSWORD=<choose_a_password_for_rstudio> -p 8787:8787 YOURDOCKERIMAGENAME
-```
-Once running, navigate to http://localhost:8787/ and then login with `rstudio`:`yourchosenpassword`. 
+An example for a 45-minute workshop:
 
-To try with **this** repository docker image:
+| Activity                      | Time |
+|-------------------------------|------|
+| Introduction of _scRNAseqApp_ | 10m  |
+| Sample code explanation       | 15m  |
+| Hands-on workshop             | 10m  |
+| Q & A                         | 10m  |
 
-```sh
-docker run -e PASSWORD=abc -p 8787:8787 ghcr.io/bioconductor/buildabiocworkshop
-```
+### Workshop goals and objectives
 
-*NOTE*: Running docker that uses the password in plain text like above exposes the password to others 
-in a multi-user system (like a shared workstation or compute node). In practice, consider using an environment 
-variable instead of plain text to pass along passwords and other secrets in docker command lines. 
+### Learning goals
 
+* Gain the knowledge of typical workflows for creating a shiny APP via _scRNAseqApp_ package
+* Understand the user management system of the APP.
+* Learn the available visualization tools provided by the package
 
-## Whatcha get
+### Learning objectives
 
-- https://bioconductor.github.io/BuildABiocWorkshop
-- A Docker image that you can run locally, in the cloud, or (usually) even as a singularity container on HPC systems. 
+* Learn how to set up a shiny APP via _scRNAseqApp_ package
+* Learn how to add a new data to the APP
+* Learn how to distribute the APP to a shiny server

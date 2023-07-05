@@ -1,28 +1,39 @@
-Package: BuildABiocWorkshop
-Title: Bioconductor or R Workshop Template and Github Actions
-Version: 2.0.0
+Package: scRNAseqApp_Bioc2023Workshop
+Title: scRNAseqApp demo package for Bioc2023
+Version: 0.99.0
 Authors@R: 
-    person(given = "Sean",
-           family = "Davis",
+    person(given = "Jianhong",
+           family = "Ou",
            role = c("aut", "cre"),
-           email = "seandavi@gmail.com",
-           comment = c(ORCID = "0000-0002-8991-6458"))
-Description: This package serves as a template for using github actions to 
-    prepare a Bioconductor Workshop package for use. In particular,
-    a pkgdown website and docker image are generated based on workflow 
-    settings. 
+           email = "jianhong.ou@duke.edu",
+           comment = c(ORCID = "0000-0002-8652-2488"))
+Description: Single-cell RNA sequencing (scRNA-seq) is a powerful technique to
+    study gene expression, cellular heterogeneity, and cell states within
+    samples in single-cell level. The development of scRNA-seq shed light to
+    address the knowledge gap about the cell types, cell interactions, and key
+    genes involved in biological process and their dynamics. To precisely meet
+    the publishing requirement, reduce the time of communication the
+    bioinformatician with researchers, and increase the re-usability and
+    reproducibility of scientific findings, based on ShinyCell, the scRNAseqApp
+    package is developed with multiple highly interactive visualizations of how
+    cells and subsets of cells cluster behavior for scRNA-seq, scATAC-seq and
+    sc-multiomics data. The end users can discover the expression of genes in
+    multiple interactive manners with highly customized filter conditions by
+    selecting metadata supplied with the publications and download the
+    ready-to-use results for republishing. This package served as the demo for
+    application of scRNAseqApp.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0
 Depends: 
-    Biobase
+    scRNAseqApp
 Suggests: 
     knitr,
     rmarkdown,
     pkgdown
-URL: https://seandavi.github.io/BuildABiocWorkshop/
-BugReports: https://github.com/seandavi/BuildABiocWorkshop/issues/new/choose
+URL: https://jianhong.github.io/scRNAseqApp_Bioc2023Workshop/
+BugReports: https://github.com/jianhong/scRNAseqApp_Bioc2023Workshop/issues/new/choose
 VignetteBuilder: knitr
-DockerImage: ghcr.io/seandavi/buildabiocworkshop:latest
+DockerImage: jianhong/scrnaseqapp_bioc2023workshop:latest
