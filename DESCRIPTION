@@ -36,4 +36,4 @@ Suggests:
 URL: https://jianhong.github.io/scRNAseqApp_Bioc2023Workshop/
 BugReports: https://github.com/jianhong/scRNAseqApp_Bioc2023Workshop/issues/new/choose
 VignetteBuilder: knitr
-DockerImage: jianhong/scrnaseqapp_bioc2023workshop:latest
+DockerImage: ghcr.io/jianhong/scrnaseqapp_bioc2023workshop
