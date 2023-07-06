@@ -50,9 +50,6 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/HOWTO_BUILD_WORKSHOP.html">How To Build A Workshop Package</a>
-    </li>
-    <li>
       <a href="../articles/workshop_scRNAseqApp.html">Package demo for scRNAseqApp</a>
     </li>
   </ul>
@@ -79,7 +76,7 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Package demo for scRNAseqApp</h1>
-                        <h4 data-toc-skip class="author">Jianhong Ou<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>
+                        <h4 data-toc-skip class="author">Jianhong Ou<a href="#section-fn1" class="footnote-ref" id="section-fnref1"><sup>1</sup></a>
 </h4>
             
       
@@ -91,7 +88,7 @@
     
     
 <div class="section level2">
-<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+<h2 id="section-introduction">Introduction<a class="anchor" aria-label="anchor" href="#section-introduction"></a>
 </h2>
 <p>Single-cell RNA sequencing (scRNA-seq) is a powerful technique to
 study gene expression, cellular heterogeneity, and cell states within
@@ -101,19 +98,898 @@ key genes involved in biological process and their dynamics. To
 precisely meet the publishing requirement, reduce the time of
 communication the bioinformatician with researchers, and increase the
 re-usability and reproducibility of scientific findings, multiple
-interactive visualization tools were developed to provide the
-researchers access to the details of the data. Based on ShinyCell, the
-scRNAseqApp package is developed with multiple highly interactive
-visualizations of how cells and subsets of cells cluster behavior for
-scRNA-seq, scATAC-seq and sc-multiomics data. The end users can discover
-the expression of genes in multiple interactive manners with highly
-customized filter conditions by selecting metadata supplied with the
-publications and download the ready-to-use results for republishing.</p>
+interactive visualization tools, such as Loupe Browser<span class="citation"><sup>1</sup></span> and cellxgene<span class="citation"><sup>2</sup></span>, were developed to provide the
+researchers access to the details of the data. In R/Bioconductor, there
+are options to use the flexibility of the R-graphics system to display
+the status of single-cell.</p>
+<p><strong>Table 1: R/Bioconductor available tools for interactive
+scRNA-Seq data visualization. </strong></p>
+<table class="table">
+<colgroup>
+<col width="10%">
+<col width="89%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">software</th>
+<th align="left">description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Asc-Seurat<span class="citation"><sup>3</sup></span>
+</td>
+<td align="left">Asc-Seurat, also known as Analytical single-cell
+Seurat-based web application, is a user-friendly web application built
+on the Shiny framework. Its name, pronounced as “ask Seurat,” reflects
+its purpose of simplifying scRNA-seq analysis. With a click-based
+interface and straightforward installation process, Asc-Seurat enables
+users to effortlessly execute all essential steps for scRNA-seq
+analysis. Moreover, it seamlessly incorporates the powerful features of
+Seurat and Dynverse, providing users with a comprehensive toolkit.
+Additionally, Asc-Seurat offers the convenient functionality of instant
+gene functional annotation using BioMart.</td>
+</tr>
+<tr class="even">
+<td align="left">BingleSeq<span class="citation"><sup>4</sup></span>
+</td>
+<td align="left">BingleSeq was created as an intuitive application to
+offer a user-friendly solution for analyzing count matrices from both
+Bulk and Single-cell RNA-Seq experiments. BingleSeq goes beyond basic
+functionality and includes additional features like visualization
+techniques, comprehensive functional annotation analysis, and rank-based
+consensus for differential gene analysis results.</td>
+</tr>
+<tr class="odd">
+<td align="left"><a href="https://mbolisetty.shinyapps.io/CellView/" class="external-link">CellView<span class="citation"><sup>5</sup></span></a></td>
+<td align="left">CellView is designed to efficiently extract expression,
+dimensionality reduction/clustering, and feature annotation data objects
+from an .Rds file. It offers 3D visualization, (co-)expression pattern
+plots, and <strong>on-the-fly differential gene expression
+analysis</strong>.</td>
+</tr>
+<tr class="even">
+<td align="left"><a href="https://vallotlab.shinyapps.io/ChromSCape/" class="external-link">ChromSCape<span class="citation"><sup>6</sup></span></a></td>
+<td align="left">ChromSCape, an application designed for Single Cells
+<strong>Chromatin landscape profiling</strong>, offers a user-friendly
+and readily deployable Shiny Application. It is specifically tailored
+for the analysis of various single-cell epigenomics datasets such as
+scChIP-seq, scATAC-seq, scCUT&amp;Tag, and more. ChromSCape provides a
+seamless workflow, starting from aligned data to differential analysis
+and gene set enrichment analysis.</td>
+</tr>
+<tr class="odd">
+<td align="left"><a href="http://granatum.dcmb.med.umich.edu" class="external-link">Granatum<span class="citation"><sup>7</sup></span></a></td>
+<td align="left">Granatum: a web-based scRNA-Seq analysis pipeline
+designed for accessible research. With a user-friendly graphical
+interface, users can navigate the pipeline effortlessly, adjusting
+parameters and visualizing results. Granatum guides users through
+diverse scRNA-Seq analysis steps, encompassing plate merging,
+batch-effect removal, outlier-sample removal, normalization, imputation,
+gene filtering, cell clustering, differential gene expression analysis,
+pathway/ontology enrichment analysis, protein network interaction
+visualization, and pseudo-time cell series construction.</td>
+</tr>
+<tr class="even">
+<td align="left">InterCellar<span class="citation"><sup>8</sup></span>
+</td>
+<td align="left">InterCellar empowers researchers to conduct interactive
+analysis of cell-cell communication results derived from scRNA-seq data.
+By utilizing <strong>pre-computed ligand-receptor interactions</strong>,
+InterCellar offers filtering options, annotations, and various
+visualizations to explore clusters, genes, and functions. Additionally,
+InterCellar leverages functional annotation from Gene Ontology and
+pathway databases, enabling data-driven analyses to investigate
+cell-cell communication in one or multiple conditions.</td>
+</tr>
+<tr class="odd">
+<td align="left">iS-CellR<span class="citation"><sup>9</sup></span>
+</td>
+<td align="left">iS-CellR, an Interactive platform for Single-cell
+RNAseq, is a web-based Shiny application that offers a comprehensive
+analysis of single-cell RNA sequencing data. It provides a rapid
+approach for filtering and normalizing raw data, performing
+dimensionality reductions (both linear and non-linear) to identify cell
+type clusters, conducting differential gene expression analysis to
+pinpoint markers, and exploring inter-/intra-sample heterogeneity.
+iS-CellR seamlessly integrates the Seurat package with Shiny’s reactive
+programming framework and employs interactive visualization using the
+plotly library.</td>
+</tr>
+<tr class="even">
+<td align="left"><a href="https://marionilab.cruk.cam.ac.uk/iSEE_allen/" class="external-link">iSEE<span class="citation"><sup>10</sup></span></a></td>
+<td align="left">iSEE is a package that offers an interactive user
+interface for data exploration within objects derived from the
+<em>SummarizedExperiment</em> class. It specifically caters to
+single-cell data stored in the SingleCellExperiment derived class. The
+user interface is built using RStudio’s Shiny framework and features a
+multi-panel layout for effortless navigation. iSEE is <strong>the
+winners of <a href="https://posit.co/blog/first-shiny-contest-winners/" class="external-link">the 1st Shiny
+Contest</a></strong>
+</td>
+</tr>
+<tr class="odd">
+<td align="left">PIVOT<span class="citation"><sup>11</sup></span>
+</td>
+<td align="left">PIVOT offers comprehensive support for routine RNA-Seq
+data analysis. It includes essential functionalities such as
+normalization, differential expression analysis, dimension reduction,
+correlation analysis, clustering, and classification. With PIVOT, users
+can effortlessly complete workflows utilizing DESeq2, monocle, and scde
+packages with just a few clicks. Additionally, all analysis reports can
+be easily exported, and the program state can be saved, loaded, and
+shared for seamless collaboration.</td>
+</tr>
+<tr class="even">
+<td align="left"><a href="https://sc1.engr.uconn.edu/" class="external-link">SC1<span class="citation"><sup>12</sup></span></a></td>
+<td align="left">SC1 offers an integrated workflow for scRNA-Seq
+analysis, introducing a novel approach to selecting informative genes
+using <strong>term-frequency inverse-document-frequency
+(TF-IDF)</strong> scores. It encompasses various methods for clustering,
+differential expression analysis, gene enrichment, interactive
+visualization, and cell cycle analysis. Furthermore, the tool seamlessly
+integrates additional single-cell omics data modalities, such as T-cell
+receptor (TCR)-Seq, and supports multiple single-cell sequencing
+technologies. With its streamlined process, researchers can swiftly
+generate a comprehensive analysis and derive valuable insights from
+their scRNA-Seq data.</td>
+</tr>
+<tr class="odd">
+<td align="left"><a href="https://www.thecailab.com/scanner/" class="external-link">SCANNER<span class="citation"><sup>13</sup></span></a></td>
+<td align="left">SCANNER utilizes Seurat object, created through the
+Seurat pipeline, as its input. It leverages the Seurat 3.0 package to
+conduct various data analyses, including data normalization, high
+variable feature selection, data scaling, dimension reduction, and
+cluster identification.</td>
+</tr>
+<tr class="even">
+<td align="left"><a href="https://innesbt.shinyapps.io/scclustvizdemoapp/" class="external-link">scClustViz<span class="citation"><sup>14</sup></span></a></td>
+<td align="left">scClustViz is a user-friendly R Shiny tool to visualize
+clustering results from common single-cell RNAseq analysis pipelines.
+The tool serves two primary purposes: A) assisting in the selection of a
+biologically relevant resolution or K from clustering results by
+assessing differential expression between the resulting clusters, and B)
+facilitating cell type annotation and identification of marker
+genes.</td>
+</tr>
+<tr class="odd">
+<td align="left">scSVA<span class="citation"><sup>15</sup></span>
+</td>
+<td align="left">scSVA (single-cell Scalable Visualization and
+Analytics) is a highly optimized tool designed for efficient
+visualization of cells on 2D or 3D embeddings. It specializes in
+extracting cell features for visualization from compressed big
+expression matrices stored in HDF5, Loom, and text file formats.
+Utilizing VaeX as a powerful Python library for grid-based vector data
+processing and integrating Shiny for its user interface, scSVA delivers
+high-performance analytics. The tool enables basic statistical analysis,
+such as computing cell counts and distributions of gene expression
+values across selected or provided cell groups. Moreover, users can
+leverage scSVAtools to interactively run fast methods for diffusion maps
+and 3D force-directed layout embedding (FLE), further enhancing their
+analysis capabilities.</td>
+</tr>
+<tr class="even">
+<td align="left"><a href="https://nasqar.abudhabi.nyu.edu/SeuratV3Wizard/" class="external-link">SeuratV3Wizard<span class="citation"><sup>16</sup></span>/NASQAR</a></td>
+<td align="left">NASQAR (Nucleic Acid SeQuence Analysis Resource) offers
+a user-friendly interface that enables users to conveniently and
+effectively explore their data interactively. It supports popular tools
+for diverse applications, including Transcriptome Data Preprocessing,
+RNAseq Analysis (including Single-cell RNAseq), Metagenomics, and Gene
+Enrichment.</td>
+</tr>
+<tr class="odd">
+<td align="left"><a href="https://cancell.medisin.uio.no/ShinyArchR.UiO/" class="external-link">ShinyArchRUiO<span class="citation"><sup>17</sup></span></a></td>
+<td align="left">ShinyArchR.UiO, short for ShinyArchR User interface
+Open, provides an integrative environment for visualizing large-scale
+single-cell chromatin accessibility data (scATAC-seq). Built upon
+<strong>ArchR<span class="citation"><sup>18</sup></span></strong>,
+ShinyArchR.UiO offers a seamless and interactive experience for
+exploring and analyzing scATAC-seq datasets.</td>
+</tr>
+<tr class="even">
+<td align="left"><a href="http://shinycell1.ddnetbio.com/" class="external-link">ShinyCell<span class="citation"><sup>19</sup></span></a></td>
+<td align="left">ShinyCell is an R package that empowers users to
+develop interactive web applications based on Shiny for visualizing
+single-cell data. It offers a range of visualization options, including
+the ability to visualize cell information and gene expression on reduced
+dimensions like UMAP. Users can also explore the coexpression of two
+genes on reduced dimensions and visualize the distribution of continuous
+cell information, such as nUMI or module scores, using violin plots or
+box plots. ShinyCell further allows users to visualize the composition
+of different clusters or groups of cells using proportion plots and
+examine the expression of multiple genes using bubble plots or
+heatmaps.</td>
+</tr>
+<tr class="odd">
+<td align="left"><a href="https://sctk.bu.edu/" class="external-link">singleCellTK<span class="citation"><sup>20</sup></span></a></td>
+<td align="left">The singleCellTK R package provides the Single Cell
+Toolkit (SCTK) facilitates the importation of raw or filtered counts
+from various scRNAseq preprocessing tools like 10x CellRanger, BUStools,
+Optimus, STARSolo, and more. It incorporates publicly available R or
+Python tools to enable comprehensive quality control, including doublet
+detection and ambient RNA removal. SCTK integrates analysis workflows
+from popular tools such as Seurat and Bioconductor/OSCA into a unified
+framework, allowing users to perform diverse analyses. The results from
+these workflows can be summarized and shared conveniently using
+comprehensive HTML reports. Additionally, data can be exported to Seurat
+or AnnData object formats, enabling seamless integration with other
+downstream analysis workflows.</td>
+</tr>
+</tbody>
+</table>
+<p>Based on <a href="https://github.com/SGDDNB/ShinyCell" class="external-link"><em>ShinyCell</em></a>, the
+<em>scRNAseqApp</em> package is developed with multiple highly
+interactive visualizations of how cells and subsets of cells cluster
+behavior for scRNA-seq, scATAC-seq and sc-multiomics data. The
+<em>scRNAseqApp</em> is designed to efficiently extract expression,
+dimensional reduction/clustering, and feature annotation data objects in
+multiple interactive manners with highly customized filter conditions by
+selecting metadata. It offers a user-friendly interface that facilitates
+the exploration and interactive analysis of single-cell transcriptomic,
+and multiomic data.</p>
+<p>Key features of <em>scRNAseqApp</em> include:</p>
+<ol style="list-style-type: decimal">
+<li><p>(Co-)Expression Patterns: Users can delve into expression
+patterns within specific clusters or among clusters, enabling a detailed
+examination of gene co-expression. It provides a three-dimensional
+visualization of the co-expression data, enhancing the understanding of
+the relationships between genes.</p></li>
+<li><p>Side-by-Side Data Visualization: The <em>scRNAseqApp</em> allows
+for the simultaneous visualization of transcriptomic or multiomic data.
+Users can easily compare expression patterns, cell metadata, or
+chromatin accessibility across different subsets of cells, facilitating
+comprehensive data exploration.</p></li>
+<li><p>All-in-One Page Visualization: With the <em>scRNAseqApp</em>,
+users can visualize up to eight different types of figures on a single
+page. This consolidated view provides a comprehensive overview of the
+data, enhancing data interpretation and analysis.</p></li>
+<li><p>Search Tool for Datasets: The <em>scRNAseqApp</em> includes a
+convenient search tool that enables users to search for specific
+expression patterns across all available datasets. The search results
+are presented as informative waffle plots, simplifying the
+identification and comparison of expression patterns.</p></li>
+<li><p>User Management System: To ensure data security and protect
+unpublished data, the <em>scRNAseqApp</em> incorporates a user
+management system. This system controls access and permissions, allowing
+researchers to safeguard their valuable datasets.</p></li>
+</ol>
+<p>The <em>scRNAseqApp</em> combines these features to provide a
+comprehensive and user-friendly platform for the analysis and
+exploration of single-cell transcriptomic and multiomic data, empowering
+researchers in their investigations.</p>
+</div>
+<div class="section level2">
+<h2 id="section-installation">Installation<a class="anchor" aria-label="anchor" href="#section-installation"></a>
+</h2>
+<p><em>BiocManager</em> is used to install the released version of
+<em>scRNAseqApp</em>.</p>
+<div class="sourceCode" id="section-cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.github.io/BiocManager/" class="external-link">BiocManager</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"scRNAseqApp"</span><span class="op">)</span></span></code></pre></div>
+<p>To check the current version of <em>scRNAseqApp</em>, please try</p>
+<div class="sourceCode" id="section-cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"scRNAseqApp"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] '1.1.8'</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="section-quick-guide-for-scrnaseqapp-with-a-subset-of-pbmcsatija2015spatial-scrna-seq-data">Quick guide for <em>scRNAseqApp</em> with a subset of PBMC<span class="citation"><sup>21</sup></span> scRNA-Seq data<a class="anchor" aria-label="anchor" href="#section-quick-guide-for-scrnaseqapp-with-a-subset-of-pbmcsatija2015spatial-scrna-seq-data"></a>
+</h2>
+<p>The package includes a subset of PBMC sample data. To demonstrate the
+package, there are three simple and straightforward steps.</p>
+<div class="section level3">
+<h3 id="section-step-1--load-library">Step 1. Load library<a class="anchor" aria-label="anchor" href="#section-step-1--load-library"></a>
+</h3>
+<div class="sourceCode" id="section-cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jianhong/scRNAseqApp" class="external-link">scRNAseqApp</a></span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="section-step-2--initial-the-database">Step 2. Initial the database<a class="anchor" aria-label="anchor" href="#section-step-2--initial-the-database"></a>
+</h3>
+<div class="sourceCode" id="section-cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">publish_folder</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/scRNAseqApp/man/scInit.html" class="external-link">scInit</a></span><span class="op">(</span>app_path<span class="op">=</span><span class="va">publish_folder</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Now copy pbmc_small sample files</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="section-step-3--start-shiny-app">Step 3. Start shiny APP<a class="anchor" aria-label="anchor" href="#section-step-3--start-shiny-app"></a>
+</h3>
+<div class="sourceCode" id="section-cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/scRNAseqApp/man/scRNAseqApp.html" class="external-link">scRNAseqApp</a></span><span class="op">(</span>app_path <span class="op">=</span> <span class="va">publish_folder</span><span class="op">)</span></span></code></pre></div>
+<iframe data-deferred-src="app79223e43850f26acd8f0361252f7155b/?w=&amp;__subapp__=1" width="100%" height="400" class="shiny-frame shiny-frame-deferred"></iframe>
+</div>
+</div>
+<div class="section level2">
+<h2 id="section-user-management">User management<a class="anchor" aria-label="anchor" href="#section-user-management"></a>
+</h2>
+<p><em>scRNAseqApp</em> bowrrow the power of <em>shinymanager</em>
+package for user management. By default, the <code>scInit</code>
+function initial the root user name as “admin” protected with password
+“scRNAseqApp”. You can change the root user name and password when you
+run <code>scInit</code> or by <code>administrator mode</code> page in
+the shiny APP after login.</p>
+<div class="float">
+<img src="../../../../tmp/RtmpUpegSQ/temp_libpathaae6722a7da/scRNAseqAppBioc2023Workshop/articles/administrator_mode.jpg" alt="administrator mode page"><div class="figcaption">administrator mode page</div>
+</div>
+<div class="section level3">
+<h3 id="section-protect-the-datasets">Protect the datasets<a class="anchor" aria-label="anchor" href="#section-protect-the-datasets"></a>
+</h3>
+<p>To protect unpublished data, simply set the <code>LOCKER</code>
+parameter to TRUE when you create the dataset.</p>
+<div class="sourceCode" id="section-cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pbmc_rds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"pbmc_signac_sub.rds"</span>,</span>
+<span>                        package<span class="op">=</span><span class="st">"scRNAseqAppBioc2023Workshop"</span>,</span>
+<span>                        mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">pbmc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="va">pbmc_rds</span><span class="op">)</span></span>
+<span><span class="va">appconf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scRNAseqApp/man/createAppConfig.html" class="external-link">createAppConfig</a></span><span class="op">(</span></span>
+<span>  title<span class="op">=</span><span class="st">"pbmc small protected"</span>,</span>
+<span>  destinationFolder <span class="op">=</span> <span class="st">"pbmc_protected"</span>,</span>
+<span>  species <span class="op">=</span> <span class="st">"Homo sapiens"</span>,</span>
+<span>  doi<span class="op">=</span><span class="st">"10.1038/nbt.3192"</span>,</span>
+<span>  datatype <span class="op">=</span> <span class="st">"scRNAseq"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/scRNAseqApp/man/createDataSet.html" class="external-link">createDataSet</a></span><span class="op">(</span><span class="va">appconf</span>, <span class="va">pbmc</span>, LOCKER <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>              datafolder <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">publish_folder</span>, <span class="st">"data"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: Signac</span></span>
+<span><span class="co">#&gt; Centering and scaling data matrix</span></span>
+<span><span class="co">#&gt; Calculating cluster CD4 TEM</span></span>
+<span><span class="co">#&gt; For a more efficient implementation of the Wilcoxon Rank Sum Test,</span></span>
+<span><span class="co">#&gt; (default method for FindMarkers) please install the limma package</span></span>
+<span><span class="co">#&gt; --------------------------------------------</span></span>
+<span><span class="co">#&gt; install.packages('BiocManager')</span></span>
+<span><span class="co">#&gt; BiocManager::install('limma')</span></span>
+<span><span class="co">#&gt; --------------------------------------------</span></span>
+<span><span class="co">#&gt; After installation of limma, Seurat will automatically use the more </span></span>
+<span><span class="co">#&gt; efficient implementation (no further action necessary).</span></span>
+<span><span class="co">#&gt; This message will be shown once per session</span></span>
+<span><span class="co">#&gt; Calculating cluster CD4 CTL</span></span>
+<span><span class="co">#&gt; An object of class Seurat </span></span>
+<span><span class="co">#&gt; 3786 features across 191 samples within 3 assays </span></span>
+<span><span class="co">#&gt; Active assay: RNA (267 features, 267 variable features)</span></span>
+<span><span class="co">#&gt;  2 other assays present: SCT, peaks</span></span>
+<span><span class="co">#&gt;  2 dimensional reductions calculated: pca, umap</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">publish_folder</span>, <span class="st">"data"</span>, <span class="st">"pbmc_protected"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "appconf.rds" "LOCKER"      "markers.rds" "sc1conf.rds" "sc1def.rds" </span></span>
+<span><span class="co">#&gt; [6] "sc1gene.rds" "sc1gexpr.h5" "sc1meta.rds"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/scRNAseqApp/man/scRNAseqApp.html" class="external-link">scRNAseqApp</a></span><span class="op">(</span>app_path <span class="op">=</span> <span class="va">publish_folder</span><span class="op">)</span></span></code></pre></div>
+<iframe data-deferred-src="app7c5da820e44da8281503649743c068bc/?w=&amp;__subapp__=1" width="100%" height="400" class="shiny-frame shiny-frame-deferred"></iframe>
+<p>Administrator can add or remove the protection in the
+<code>EditData</code> tab of the <code>administrator mode</code>
+page.</p>
+<div class="float">
+<img src="../../../../tmp/RtmpUpegSQ/temp_libpathaae6722a7da/scRNAseqAppBioc2023Workshop/articles/change_the_status_protection.png" alt="change the protection status for a data"><div class="figcaption">change the protection status for a data</div>
+</div>
+<p>Then administrator can add or remove protected data for users in the
+<code>Home</code> tab of the <code>administrator mode</code> page.
+Please note that the different datasets are separated by ‘;’ in the
+Privilege setting.</p>
+<div class="float">
+<img src="../../../../tmp/RtmpUpegSQ/temp_libpathaae6722a7da/scRNAseqAppBioc2023Workshop/articles/user_management.jpg" alt="change the user privileges"><div class="figcaption">change the user privileges</div>
+</div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="section-distribute-to-a-shiny-server">Distribute to a shiny server<a class="anchor" aria-label="anchor" href="#section-distribute-to-a-shiny-server"></a>
+</h2>
+<p>There are two steps to distribute to a shiny server. First, install
+the package in the server as root user. Second, in a R session run
+<code><a href="https://rdrr.io/pkg/scRNAseqApp/man/scInit.html" class="external-link">scInit()</a></code> after load the <code>scRNAseqApp</code> library.
+If you initialed the app offline, copy the app folder to the shiny
+server.</p>
+<p>Note: the following files need to be writable for shiny:
+<code>www/database.sqlite</code>, <code>www/counter.tsv</code> and the
+app <code>www</code> folder should also be writable because the user
+manager is depend on SQLite, and the SQLite needs to be able to create a
+journal file in the same directory as the DB, before any modifications
+can take place. The journal is used to support transaction rollback.</p>
+</div>
+<div class="section level2">
+<h2 id="section-add-additional-data-to-the-app">Add additional data to the APP<a class="anchor" aria-label="anchor" href="#section-add-additional-data-to-the-app"></a>
+</h2>
+<p>To add additional data to the APP, first prepare an preprocessed
+scRNA-Seq data, scATAC-Seq data or scMultiomic data. Then create a
+<code>appconf</code> object to include the basic information about the
+data. After that use <code>createDataSet</code> to add the data to
+publish folder.</p>
+<div class="section level3">
+<h3 id="section-add-preprocessed-scrna-seq-data-in-seurat-format">Add preprocessed scRNA-Seq data in Seurat format<a class="anchor" aria-label="anchor" href="#section-add-preprocessed-scrna-seq-data-in-seurat-format"></a>
+</h3>
+<div class="sourceCode" id="section-cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># just modify the appconf we created in previous step</span></span>
+<span><span class="co"># the data will write to folder bpmc_cd4 with title 'bpmc small CD4 subset'</span></span>
+<span><span class="va">appconf</span><span class="op">$</span><span class="va">title</span> <span class="op">&lt;-</span> <span class="st">"pbmc small CD4 subset"</span></span>
+<span><span class="va">appconf</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"pbmc_cd4"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/scRNAseqApp/man/createDataSet.html" class="external-link">createDataSet</a></span><span class="op">(</span><span class="va">appconf</span>, <span class="va">pbmc</span>, datafolder <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">publish_folder</span>, <span class="st">"data"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Centering and scaling data matrix</span></span>
+<span><span class="co">#&gt; Calculating cluster CD4 TEM</span></span>
+<span><span class="co">#&gt; Calculating cluster CD4 CTL</span></span>
+<span><span class="co">#&gt; An object of class Seurat </span></span>
+<span><span class="co">#&gt; 3786 features across 191 samples within 3 assays </span></span>
+<span><span class="co">#&gt; Active assay: RNA (267 features, 267 variable features)</span></span>
+<span><span class="co">#&gt;  2 other assays present: SCT, peaks</span></span>
+<span><span class="co">#&gt;  2 dimensional reductions calculated: pca, umap</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">publish_folder</span>, <span class="st">"data"</span>, <span class="st">"pbmc_cd4"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "appconf.rds" "markers.rds" "sc1conf.rds" "sc1def.rds"  "sc1gene.rds"</span></span>
+<span><span class="co">#&gt; [6] "sc1gexpr.h5" "sc1meta.rds"</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="section-add-preprocessed-scrna-seq-data-in-anndata-format">Add preprocessed scRNA-Seq data in annData format<a class="anchor" aria-label="anchor" href="#section-add-preprocessed-scrna-seq-data-in-anndata-format"></a>
+</h3>
+<p><code>annData</code> is the data format saved by most of the popular
+python based scRNA-seq analysis pipelines. You need to convert the
+<code>annData</code> into <code>Seurat</code> object first and then add
+the data into the APP. Here are some useful links for that: <a href="https://mojaveazure.github.io/seurat-disk/articles/convert-anndata.html" class="external-link uri">https://mojaveazure.github.io/seurat-disk/articles/convert-anndata.html</a>
+<a href="https://github.com/cellgeni/sceasy" class="external-link uri">https://github.com/cellgeni/sceasy</a></p>
+</div>
+<div class="section level3">
+<h3 id="section-add-10x-genomics-chromium-single-cell-multiome-atac-gene-expression-data">Add 10X genomics Chromium Single Cell Multiome ATAC + Gene
+Expression data<a class="anchor" aria-label="anchor" href="#section-add-10x-genomics-chromium-single-cell-multiome-atac-gene-expression-data"></a>
+</h3>
+<div class="sourceCode" id="section-cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mojaveazure.github.io/seurat-object/" class="external-link">SeuratObject</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: sp</span></span>
+<span><span class="va">appconf</span><span class="op">$</span><span class="va">title</span> <span class="op">&lt;-</span> <span class="st">"pbmc scMultiome"</span></span>
+<span><span class="va">appconf</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"pbmc_multiome"</span></span>
+<span><span class="va">appconf</span><span class="op">$</span><span class="va">type</span> <span class="op">&lt;-</span> <span class="st">"scMultiome"</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">pbmc</span><span class="op">@</span><span class="va">assays</span><span class="op">$</span><span class="va">peaks</span><span class="op">@</span><span class="va">fragments</span><span class="op">)</span><span class="op">)</span><span class="op">{</span><span class="co">## patch the fragment path</span></span>
+<span>  <span class="va">pbmc</span><span class="op">@</span><span class="va">assays</span><span class="op">$</span><span class="va">peaks</span><span class="op">@</span><span class="va">fragments</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">@</span><span class="va">path</span> <span class="op">&lt;-</span> </span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">dirname</a></span><span class="op">(</span><span class="va">pbmc_rds</span><span class="op">)</span>, <span class="va">pbmc</span><span class="op">@</span><span class="va">assays</span><span class="op">$</span><span class="va">peaks</span><span class="op">@</span><span class="va">fragments</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">@</span><span class="va">path</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/scRNAseqApp/man/createDataSet.html" class="external-link">createDataSet</a></span><span class="op">(</span><span class="va">appconf</span>,</span>
+<span>              <span class="va">pbmc</span>,</span>
+<span>              atacAssayName<span class="op">=</span><span class="st">"peaks"</span>,</span>
+<span>              datafolder <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">publish_folder</span>, <span class="st">"data"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Centering and scaling data matrix</span></span>
+<span><span class="co">#&gt; Calculating cluster CD4 TEM</span></span>
+<span><span class="co">#&gt; Calculating cluster CD4 CTL</span></span>
+<span><span class="co">#&gt; Warning in makeShinyFiles(seu, scConf = config, assayName = assayName, gexSlot</span></span>
+<span><span class="co">#&gt; = gexSlot, : scATAC links data are not available.</span></span>
+<span><span class="co">#&gt; The following steps will cost memories.</span></span>
+<span><span class="co">#&gt; Loading required package: BiocGenerics</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'BiocGenerics'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:scRNAseqApp':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     lapply</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     IQR, mad, sd, var, xtabs</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     anyDuplicated, aperm, append, as.data.frame, basename, cbind,</span></span>
+<span><span class="co">#&gt;     colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,</span></span>
+<span><span class="co">#&gt;     get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply,</span></span>
+<span><span class="co">#&gt;     match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,</span></span>
+<span><span class="co">#&gt;     Position, rank, rbind, Reduce, rownames, sapply, setdiff, sort,</span></span>
+<span><span class="co">#&gt;     table, tapply, union, unique, unsplit, which.max, which.min</span></span>
+<span><span class="co">#&gt; Loading required package: S4Vectors</span></span>
+<span><span class="co">#&gt; Loading required package: stats4</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'S4Vectors'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:utils':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     findMatches</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     expand.grid, I, unname</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'IRanges'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:sp':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     %over%</span></span>
+<span><span class="co">#&gt; An object of class Seurat </span></span>
+<span><span class="co">#&gt; 3786 features across 191 samples within 3 assays </span></span>
+<span><span class="co">#&gt; Active assay: RNA (267 features, 267 variable features)</span></span>
+<span><span class="co">#&gt;  2 other assays present: SCT, peaks</span></span>
+<span><span class="co">#&gt;  2 dimensional reductions calculated: pca, umap</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">publish_folder</span>, <span class="st">"data"</span>, <span class="st">"pbmc_multiome"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] "appconf.rds" "bws"         "markers.rds" "sc1anno.rds" "sc1atac.h5" </span></span>
+<span><span class="co">#&gt;  [6] "sc1conf.rds" "sc1def.rds"  "sc1gene.rds" "sc1gexpr.h5" "sc1link.rds"</span></span>
+<span><span class="co">#&gt; [11] "sc1meta.rds" "sc1peak.rds"</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="section-add-archr-or-signac-preprocessed-scatac-seq-data">Add ArchR or Signac preprocessed scATAC-Seq data<a class="anchor" aria-label="anchor" href="#section-add-archr-or-signac-preprocessed-scatac-seq-data"></a>
+</h3>
+<p>To add ArchR preprocessed data, the first step is to convert it into
+Signac like Seurat object. Here is the pseudo-code for adding a
+preprocessed scATAC-Seq data.</p>
+<div class="sourceCode" id="section-cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">ArchRtoSignac</span><span class="op">)</span></span>
+<span><span class="va">packages</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ArchR"</span>,<span class="st">"Seurat"</span>, <span class="st">"Signac"</span>,<span class="st">"stringr"</span><span class="op">)</span> <span class="co"># required packages</span></span>
+<span><span class="fu">loadinglibrary</span><span class="op">(</span><span class="va">packages</span><span class="op">)</span></span>
+<span><span class="va">fragments_dirs</span> <span class="op">&lt;-</span> <span class="st">"path/to/fragments/"</span></span>
+<span><span class="va">proj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="st">"path/to/Save-ArchR-Project.rds"</span><span class="op">)</span></span>
+<span><span class="co">## do this when you moved the Arrow files</span></span>
+<span><span class="co">## skip it if you did not change the directory of your Arrow files.</span></span>
+<span><span class="va">proj</span><span class="op">@</span><span class="va">sampleColData</span><span class="op">$</span><span class="va">ArrowFiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"previouse/dirname/to/ArrowFiles"</span>,</span>
+<span>                                     <span class="st">"current/dirname/to/ArrowFiles"</span>,</span>
+<span>                                     <span class="va">proj</span><span class="op">@</span><span class="va">sampleColData</span><span class="op">$</span><span class="va">ArrowFiles</span><span class="op">)</span></span>
+<span><span class="va">proj</span><span class="op">@</span><span class="va">projectMetadata</span><span class="op">$</span><span class="va">outputDirectory</span> <span class="op">&lt;-</span> <span class="st">"path/to/metadata/output/dir"</span></span>
+<span><span class="va">pkm</span> <span class="op">&lt;-</span> <span class="fu">getPeakMatrix</span><span class="op">(</span><span class="va">proj</span><span class="op">)</span> <span class="co"># proj is an ArchRProject</span></span>
+<span><span class="fu">getAvailableMatrices</span><span class="op">(</span><span class="va">proj</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">EnsDb.Mmusculus.v79</span><span class="op">)</span> <span class="co"># if it is a mouse data (mm10)</span></span>
+<span><span class="va">annotations</span> <span class="op">&lt;-</span> <span class="fu">getAnnotation</span><span class="op">(</span>reference <span class="op">=</span> <span class="va">EnsDb.Mmusculus.v79</span>, refversion <span class="op">=</span> <span class="st">"mm10"</span><span class="op">)</span></span>
+<span><span class="va">ArchR2Signac</span> <span class="op">&lt;-</span> <span class="kw">function</span> <span class="op">(</span><span class="va">ArchRProject</span>, <span class="va">refversion</span>, <span class="va">samples</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">fragments_dir</span> <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>          <span class="va">pm</span>, <span class="va">fragments_fromcellranger</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">fragments_file_extension</span> <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>          <span class="va">annotation</span>, <span class="va">validate.fragments</span> <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">samples</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">ArchRProject</span><span class="op">@</span><span class="va">cellColData</span><span class="op">$</span><span class="va">Sample</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">fragments_fromcellranger</span> <span class="op">==</span> <span class="st">"YES"</span> <span class="op">|</span> <span class="va">fragments_fromcellranger</span> <span class="op">==</span></span>
+<span>      <span class="st">"Y"</span> <span class="op">|</span> <span class="va">fragments_fromcellranger</span> <span class="op">==</span> <span class="st">"Yes"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"In Progress:"</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"Prepare Seurat list for each sample"</span><span class="op">)</span></span>
+<span>    <span class="va">output_dir</span> <span class="op">=</span> <span class="st">"/outs/"</span></span>
+<span>    <span class="va">seurat_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">samples</span>, <span class="kw">function</span><span class="op">(</span><span class="va">cur_sample</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cur_sample</span><span class="op">)</span></span>
+<span>      <span class="va">cur_fragments</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">is.list</a></span><span class="op">(</span><span class="va">fragments_dir</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">fragments_dir</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">samples</span> <span class="op">==</span></span>
+<span>                                                                                    <span class="va">cur_sample</span><span class="op">)</span><span class="op">]</span><span class="op">]</span>, <span class="va">output_dir</span>, <span class="st">"fragments.tsv.gz"</span><span class="op">)</span>,</span>
+<span>                              <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">fragments_dir</span>, <span class="va">cur_sample</span>, <span class="va">output_dir</span>,</span>
+<span>                                     <span class="st">"fragments.tsv.gz"</span><span class="op">)</span><span class="op">)</span></span>
+<span>      <span class="va">cur_pm</span> <span class="op">&lt;-</span> <span class="va">pm</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">cur_sample</span>, <span class="st">"#"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">pm</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
+<span>      <span class="va">cur_meta</span> <span class="op">&lt;-</span> <span class="va">ArchRProject</span><span class="op">@</span><span class="va">cellColData</span> <span class="op">%&gt;%</span> <span class="va">as.data.frame</span> <span class="op">%&gt;%</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">Sample</span> <span class="op">==</span> <span class="va">cur_sample</span><span class="op">)</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">cur_pm</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu">str_split</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">cur_pm</span><span class="op">)</span>,</span>
+<span>                                                   <span class="st">"#"</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">cur_meta</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu">str_split</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">cur_meta</span><span class="op">)</span>,</span>
+<span>                                                     <span class="st">"#"</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">cur_pm</span><span class="op">)</span><span class="op">)</span></span>
+<span>      <span class="va">cur_chromatin</span> <span class="op">&lt;-</span> <span class="fu">Signac</span><span class="fu">::</span><span class="fu"><a href="https://stuartlab.org/signac/reference/CreateChromatinAssay.html" class="external-link">CreateChromatinAssay</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">cur_pm</span>,</span>
+<span>                                                    sep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-"</span>, <span class="st">"-"</span><span class="op">)</span>, fragments <span class="op">=</span> <span class="va">cur_fragments</span>,</span>
+<span>                                                    ranges <span class="op">=</span> <span class="va">ArchRProject</span><span class="op">@</span><span class="va">peakSet</span>, genome <span class="op">=</span> <span class="va">refversion</span>,</span>
+<span>                                                    annotation <span class="op">=</span> <span class="va">annotation</span><span class="op">)</span></span>
+<span>      <span class="va">cur_atac</span> <span class="op">&lt;-</span> <span class="fu">Seurat</span><span class="fu">::</span><span class="fu"><a href="https://mojaveazure.github.io/seurat-object/reference/CreateSeuratObject.html" class="external-link">CreateSeuratObject</a></span><span class="op">(</span><span class="va">cur_chromatin</span>,</span>
+<span>                                             assay <span class="op">=</span> <span class="st">"peaks"</span>, meta.data <span class="op">=</span> <span class="va">cur_meta</span>, <span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">fragments_fromcellranger</span> <span class="op">==</span> <span class="st">"NO"</span> <span class="op">|</span> <span class="va">fragments_fromcellranger</span> <span class="op">==</span></span>
+<span>      <span class="st">"N"</span> <span class="op">|</span> <span class="va">fragments_fromcellranger</span> <span class="op">==</span> <span class="st">"No"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"IF selecting NO, please make sure to provide fragments_file_extension"</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"In Progress:"</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"Prepare Seurat list for each sample"</span><span class="op">)</span></span>
+<span>    <span class="va">seurat_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">samples</span>, <span class="kw">function</span><span class="op">(</span><span class="va">cur_sample</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cur_sample</span><span class="op">)</span></span>
+<span>      <span class="va">cur_fragments</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">is.list</a></span><span class="op">(</span><span class="va">fragments_dir</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">fragments_dir</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">samples</span> <span class="op">==</span></span>
+<span>                                                                                    <span class="va">cur_sample</span><span class="op">)</span><span class="op">]</span><span class="op">]</span>, <span class="va">fragments_file_extension</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">fragments_dir</span>,</span>
+<span>                                                                                                                                     <span class="va">cur_sample</span>, <span class="va">fragments_file_extension</span><span class="op">)</span><span class="op">)</span></span>
+<span>      <span class="va">cur_pm</span> <span class="op">&lt;-</span> <span class="va">pm</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">cur_sample</span>, <span class="st">"#"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">pm</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
+<span>      <span class="va">cur_meta</span> <span class="op">&lt;-</span> <span class="va">ArchRProject</span><span class="op">@</span><span class="va">cellColData</span> <span class="op">%&gt;%</span> <span class="va">as.data.frame</span> <span class="op">%&gt;%</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">Sample</span> <span class="op">==</span> <span class="va">cur_sample</span><span class="op">)</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">cur_pm</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu">str_split</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">cur_pm</span><span class="op">)</span>,</span>
+<span>                                                   <span class="st">"#"</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">cur_meta</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu">str_split</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">cur_meta</span><span class="op">)</span>,</span>
+<span>                                                     <span class="st">"#"</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">cur_pm</span><span class="op">)</span><span class="op">)</span></span>
+<span>      <span class="va">cur_chromatin</span> <span class="op">&lt;-</span> <span class="fu">Signac</span><span class="fu">::</span><span class="fu"><a href="https://stuartlab.org/signac/reference/CreateChromatinAssay.html" class="external-link">CreateChromatinAssay</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">cur_pm</span>,</span>
+<span>                                                    sep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-"</span>, <span class="st">"-"</span><span class="op">)</span>, fragments <span class="op">=</span> <span class="va">cur_fragments</span>,</span>
+<span>                                                    ranges <span class="op">=</span> <span class="va">ArchRProject</span><span class="op">@</span><span class="va">peakSet</span>, genome <span class="op">=</span> <span class="va">refversion</span>,</span>
+<span>                                                    annotation <span class="op">=</span> <span class="va">annotation</span>,</span>
+<span>                                                    validate.fragments <span class="op">=</span> <span class="va">validate.fragments</span><span class="op">)</span></span>
+<span>      <span class="va">cur_atac</span> <span class="op">&lt;-</span> <span class="fu">Seurat</span><span class="fu">::</span><span class="fu"><a href="https://mojaveazure.github.io/seurat-object/reference/CreateSeuratObject.html" class="external-link">CreateSeuratObject</a></span><span class="op">(</span><span class="va">cur_chromatin</span>,</span>
+<span>                                             assay <span class="op">=</span> <span class="st">"peaks"</span>, meta.data <span class="op">=</span> <span class="va">cur_meta</span>, <span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"In Progress:"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"Merge Seurat list"</span><span class="op">)</span></span>
+<span>  <span class="va">SeuratObject</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sp/man/merge.html" class="external-link">merge</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">seurat_list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, y <span class="op">=</span> <span class="va">seurat_list</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">seurat_list</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>                        add.cell.ids <span class="op">=</span> <span class="va">samples</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"Return SeuratObject"</span><span class="op">)</span></span>
+<span>  <span class="va">SeuratObject</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">seurat_atac</span> <span class="op">&lt;-</span> <span class="fu">ArchR2Signac</span><span class="op">(</span></span>
+<span>  ArchRProject <span class="op">=</span> <span class="va">proj</span>,</span>
+<span>  refversion <span class="op">=</span> <span class="st">"mm10"</span>,</span>
+<span>  <span class="co">#samples = samplelist, # list of samples in the ArchRProject (default will use ArchRProject@cellColData$Sample but another list can be provided)</span></span>
+<span>  fragments_dir <span class="op">=</span> <span class="va">fragments_dirs</span>,</span>
+<span>  pm <span class="op">=</span> <span class="va">pkm</span>, <span class="co"># peak matrix from getPeakMatrix()</span></span>
+<span>  fragments_fromcellranger <span class="op">=</span> <span class="st">"No"</span>, <span class="co"># fragments_fromcellranger This is an Yes or No selection ("NO" | "N" | "No" or "YES" | "Y" | "Yes")</span></span>
+<span>  fragments_file_extension <span class="op">=</span> <span class="st">".tsv.gz"</span>, <span class="co"># Default - NULL: File_Extension for fragments files (typically they should be '.tsv.gz' or '.fragments.tsv.gz')</span></span>
+<span>  annotation <span class="op">=</span> <span class="va">annotations</span> <span class="co"># annotation from getAnnotation()</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">gsm</span> <span class="op">&lt;-</span> <span class="fu">getGeneScoreMatrix</span><span class="op">(</span>ArchRProject <span class="op">=</span> <span class="va">proj</span>, SeuratObject <span class="op">=</span> <span class="va">seurat_atac</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">seurat_atac</span><span class="op">[[</span><span class="st">'RNA'</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mojaveazure.github.io/seurat-object/reference/CreateAssayObject.html" class="external-link">CreateAssayObject</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">gsm</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">seurat_atac</span> <span class="op">&lt;-</span> <span class="fu">addDimRed</span><span class="op">(</span></span>
+<span>  ArchRProject <span class="op">=</span> <span class="va">proj</span>,</span>
+<span>  SeuratObject <span class="op">=</span> <span class="va">seurat_atac</span>,</span>
+<span>  addUMAPs <span class="op">=</span> <span class="st">"UMAP"</span>,</span>
+<span>  reducedDims <span class="op">=</span> <span class="st">"IterativeLSI"</span></span>
+<span><span class="op">)</span> <span class="co"># default is "IterativeLSI"</span></span>
+<span></span>
+<span><span class="co">#add both 'Harmony' and ‘IterativeLSI’:</span></span>
+<span><span class="va">seurat_atac</span> <span class="op">&lt;-</span> <span class="fu">addTwoDimRed</span><span class="op">(</span></span>
+<span>  ArchRProject <span class="op">=</span> <span class="va">proj</span>,</span>
+<span>  SeuratObject <span class="op">=</span> <span class="va">seurat_atac</span>,</span>
+<span>  addUMAPs <span class="op">=</span> <span class="st">"UMAP"</span>,</span>
+<span>  reducedDims1 <span class="op">=</span> <span class="st">"IterativeLSI"</span>,</span>
+<span>  <span class="co"># Please limit your reducedDims to one of the following: IterativeLSI, IterativeLSI2 or Harmony</span></span>
+<span>  reducedDims2 <span class="op">=</span> <span class="st">"Harmony"</span> <span class="co"># IterativeLSI2 or Harmony</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">appconf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scRNAseqApp/man/createAppConfig.html" class="external-link">createAppConfig</a></span><span class="op">(</span></span>
+<span>       title<span class="op">=</span><span class="st">"scATACseq example"</span>,</span>
+<span>       destinationFolder <span class="op">=</span> <span class="st">"scATACseq_exp"</span>,</span>
+<span>       species <span class="op">=</span> <span class="st">"Mus musculus"</span>,</span>
+<span>       datatype <span class="op">=</span> <span class="st">"scATAC"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/scRNAseqApp/man/createDataSet.html" class="external-link">createDataSet</a></span><span class="op">(</span><span class="va">appconf</span>, <span class="va">seurat_atac</span>, atacAssayName<span class="op">=</span><span class="st">"peaks"</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">publish_folder</span>, <span class="st">"data"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/scRNAseqApp/man/scRNAseqApp.html" class="external-link">scRNAseqApp</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="section-sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#section-sessioninfo"></a>
+</h2>
+<div class="sourceCode" id="section-cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; R version 4.3.1 (2023-06-16)</span></span>
+<span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 22.04.2 LTS</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Matrix products: default</span></span>
+<span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
+<span><span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; locale:</span></span>
+<span><span class="co">#&gt;  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              </span></span>
+<span><span class="co">#&gt;  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    </span></span>
+<span><span class="co">#&gt;  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   </span></span>
+<span><span class="co">#&gt;  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 </span></span>
+<span><span class="co">#&gt;  [9] LC_ADDRESS=C               LC_TELEPHONE=C            </span></span>
+<span><span class="co">#&gt; [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; time zone: Etc/UTC</span></span>
+<span><span class="co">#&gt; tzcode source: system (glibc)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; attached base packages:</span></span>
+<span><span class="co">#&gt; [1] stats4    stats     graphics  grDevices utils     datasets  methods  </span></span>
+<span><span class="co">#&gt; [8] base     </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; other attached packages:</span></span>
+<span><span class="co">#&gt; [1] GenomeInfoDb_1.37.2 IRanges_2.35.2      S4Vectors_0.39.1   </span></span>
+<span><span class="co">#&gt; [4] BiocGenerics_0.47.0 SeuratObject_4.1.3  sp_2.0-0           </span></span>
+<span><span class="co">#&gt; [7] Signac_1.10.0       scRNAseqApp_1.1.8   pander_0.6.5       </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
+<span><span class="co">#&gt;   [1] TrajectoryUtils_1.9.0       RcppAnnoy_0.0.21           </span></span>
+<span><span class="co">#&gt;   [3] slingshot_2.9.0             splines_4.3.1              </span></span>
+<span><span class="co">#&gt;   [5] later_1.3.1                 BiocIO_1.11.0              </span></span>
+<span><span class="co">#&gt;   [7] bitops_1.0-7                R.oo_1.25.0                </span></span>
+<span><span class="co">#&gt;   [9] tibble_3.2.1                polyclip_1.10-4            </span></span>
+<span><span class="co">#&gt;  [11] XML_3.99-0.14               shinymanager_1.0.410       </span></span>
+<span><span class="co">#&gt;  [13] lifecycle_1.0.3             doParallel_1.0.17          </span></span>
+<span><span class="co">#&gt;  [15] rprojroot_2.0.3             hdf5r_1.3.8                </span></span>
+<span><span class="co">#&gt;  [17] globals_0.16.2              lattice_0.21-8             </span></span>
+<span><span class="co">#&gt;  [19] MASS_7.3-60                 backports_1.4.1            </span></span>
+<span><span class="co">#&gt;  [21] magrittr_2.0.3              plotly_4.10.2              </span></span>
+<span><span class="co">#&gt;  [23] sass_0.4.6                  rmarkdown_2.23             </span></span>
+<span><span class="co">#&gt;  [25] jquerylib_0.1.4             yaml_2.3.7                 </span></span>
+<span><span class="co">#&gt;  [27] httpuv_1.6.11               Seurat_4.3.0.1             </span></span>
+<span><span class="co">#&gt;  [29] sctransform_0.3.5           askpass_1.1                </span></span>
+<span><span class="co">#&gt;  [31] spatstat.sparse_3.0-2       reticulate_1.30            </span></span>
+<span><span class="co">#&gt;  [33] DBI_1.1.3                   cowplot_1.1.1              </span></span>
+<span><span class="co">#&gt;  [35] pbapply_1.7-2               RColorBrewer_1.1-3         </span></span>
+<span><span class="co">#&gt;  [37] lubridate_1.9.2             abind_1.4-5                </span></span>
+<span><span class="co">#&gt;  [39] zlibbioc_1.47.0             Rtsne_0.16                 </span></span>
+<span><span class="co">#&gt;  [41] GenomicRanges_1.53.1        R.utils_2.12.2             </span></span>
+<span><span class="co">#&gt;  [43] purrr_1.0.1                 RCurl_1.98-1.12            </span></span>
+<span><span class="co">#&gt;  [45] tweenr_2.0.2                circlize_0.4.15            </span></span>
+<span><span class="co">#&gt;  [47] GenomeInfoDbData_1.2.10     ggrepel_0.9.3              </span></span>
+<span><span class="co">#&gt;  [49] irlba_2.3.5.1               listenv_0.9.0              </span></span>
+<span><span class="co">#&gt;  [51] spatstat.utils_3.0-3        goftest_1.2-3              </span></span>
+<span><span class="co">#&gt;  [53] spatstat.random_3.1-5       fitdistrplus_1.1-11        </span></span>
+<span><span class="co">#&gt;  [55] parallelly_1.36.0           pkgdown_2.0.7              </span></span>
+<span><span class="co">#&gt;  [57] RcppRoll_0.3.0              leiden_0.4.3               </span></span>
+<span><span class="co">#&gt;  [59] codetools_0.2-19            DelayedArray_0.27.9        </span></span>
+<span><span class="co">#&gt;  [61] DT_0.28                     xml2_1.3.5                 </span></span>
+<span><span class="co">#&gt;  [63] ggforce_0.4.1               tidyselect_1.2.0           </span></span>
+<span><span class="co">#&gt;  [65] shape_1.4.6                 farver_2.1.1               </span></span>
+<span><span class="co">#&gt;  [67] matrixStats_1.0.0           spatstat.explore_3.2-1     </span></span>
+<span><span class="co">#&gt;  [69] GenomicAlignments_1.37.0    jsonlite_1.8.7             </span></span>
+<span><span class="co">#&gt;  [71] GetoptLong_1.0.5            ellipsis_0.3.2             </span></span>
+<span><span class="co">#&gt;  [73] progressr_0.13.0            ggridges_0.5.4             </span></span>
+<span><span class="co">#&gt;  [75] survival_3.5-5              iterators_1.0.14           </span></span>
+<span><span class="co">#&gt;  [77] systemfonts_1.0.4           foreach_1.5.2              </span></span>
+<span><span class="co">#&gt;  [79] tools_4.3.1                 ragg_1.2.5                 </span></span>
+<span><span class="co">#&gt;  [81] ica_1.0-3                   Rcpp_1.0.11                </span></span>
+<span><span class="co">#&gt;  [83] glue_1.6.2                  gridExtra_2.3              </span></span>
+<span><span class="co">#&gt;  [85] SparseArray_1.1.10          RefManageR_1.4.0           </span></span>
+<span><span class="co">#&gt;  [87] xfun_0.39                   MatrixGenerics_1.13.0      </span></span>
+<span><span class="co">#&gt;  [89] dplyr_1.1.2                 withr_2.5.0                </span></span>
+<span><span class="co">#&gt;  [91] fastmap_1.1.1               fansi_1.0.4                </span></span>
+<span><span class="co">#&gt;  [93] openssl_2.0.6               digest_0.6.32              </span></span>
+<span><span class="co">#&gt;  [95] timechange_0.2.0            R6_2.5.1                   </span></span>
+<span><span class="co">#&gt;  [97] mime_0.12                   textshaping_0.3.6          </span></span>
+<span><span class="co">#&gt;  [99] colorspace_2.1-0            scattermore_1.2            </span></span>
+<span><span class="co">#&gt; [101] tensor_1.5                  RSQLite_2.3.1              </span></span>
+<span><span class="co">#&gt; [103] spatstat.data_3.0-1         R.methodsS3_1.8.2          </span></span>
+<span><span class="co">#&gt; [105] utf8_1.2.3                  tidyr_1.3.0                </span></span>
+<span><span class="co">#&gt; [107] generics_0.1.3              data.table_1.14.8          </span></span>
+<span><span class="co">#&gt; [109] rtracklayer_1.61.0          httr_1.4.6                 </span></span>
+<span><span class="co">#&gt; [111] htmlwidgets_1.6.2           S4Arrays_1.1.4             </span></span>
+<span><span class="co">#&gt; [113] uwot_0.1.16                 pkgconfig_2.0.3            </span></span>
+<span><span class="co">#&gt; [115] gtable_0.3.3                blob_1.2.4                 </span></span>
+<span><span class="co">#&gt; [117] ComplexHeatmap_2.17.0       lmtest_0.9-40              </span></span>
+<span><span class="co">#&gt; [119] SingleCellExperiment_1.23.0 XVector_0.41.1             </span></span>
+<span><span class="co">#&gt; [121] htmltools_0.5.5             shinyhelper_0.3.2          </span></span>
+<span><span class="co">#&gt; [123] bookdown_0.34               clue_0.3-64                </span></span>
+<span><span class="co">#&gt; [125] scales_1.2.1                Biobase_2.61.0             </span></span>
+<span><span class="co">#&gt; [127] png_0.1-8                   ggdendro_0.1.23            </span></span>
+<span><span class="co">#&gt; [129] knitr_1.43                  reshape2_1.4.4             </span></span>
+<span><span class="co">#&gt; [131] rjson_0.2.21                curl_5.0.1                 </span></span>
+<span><span class="co">#&gt; [133] nlme_3.1-162                cachem_1.0.8               </span></span>
+<span><span class="co">#&gt; [135] zoo_1.8-12                  GlobalOptions_0.1.2        </span></span>
+<span><span class="co">#&gt; [137] stringr_1.5.0               KernSmooth_2.23-21         </span></span>
+<span><span class="co">#&gt; [139] parallel_4.3.1              miniUI_0.1.1.1             </span></span>
+<span><span class="co">#&gt; [141] restfulr_0.0.15             desc_1.4.2                 </span></span>
+<span><span class="co">#&gt; [143] pillar_1.9.0                grid_4.3.1                 </span></span>
+<span><span class="co">#&gt; [145] vctrs_0.6.3                 RANN_2.6.1                 </span></span>
+<span><span class="co">#&gt; [147] promises_1.2.0.1            princurve_2.1.6            </span></span>
+<span><span class="co">#&gt; [149] billboarder_0.4.0           xtable_1.8-4               </span></span>
+<span><span class="co">#&gt; [151] cluster_2.1.4               evaluate_0.21              </span></span>
+<span><span class="co">#&gt; [153] cli_3.6.1                   compiler_4.3.1             </span></span>
+<span><span class="co">#&gt; [155] Rsamtools_2.17.0            rlang_1.1.1                </span></span>
+<span><span class="co">#&gt; [157] crayon_1.5.2                sortable_0.5.0             </span></span>
+<span><span class="co">#&gt; [159] future.apply_1.11.0         plyr_1.8.8                 </span></span>
+<span><span class="co">#&gt; [161] fs_1.6.2                    stringi_1.7.12             </span></span>
+<span><span class="co">#&gt; [163] viridisLite_0.4.2           deldir_1.0-9               </span></span>
+<span><span class="co">#&gt; [165] BiocParallel_1.35.2         assertthat_0.2.1           </span></span>
+<span><span class="co">#&gt; [167] munsell_0.5.0               Biostrings_2.69.2          </span></span>
+<span><span class="co">#&gt; [169] lazyeval_0.2.2              spatstat.geom_3.2-2        </span></span>
+<span><span class="co">#&gt; [171] Matrix_1.5-4.1              scrypt_0.1.6               </span></span>
+<span><span class="co">#&gt; [173] patchwork_1.1.2             bit64_4.0.5                </span></span>
+<span><span class="co">#&gt; [175] future_1.33.0               learnr_0.11.4              </span></span>
+<span><span class="co">#&gt; [177] ggplot2_3.4.2               shiny_1.7.4.1              </span></span>
+<span><span class="co">#&gt; [179] SummarizedExperiment_1.31.1 ROCR_1.0-11                </span></span>
+<span><span class="co">#&gt; [181] igraph_1.5.0                memoise_2.0.1              </span></span>
+<span><span class="co">#&gt; [183] bslib_0.5.0                 bibtex_0.5.1               </span></span>
+<span><span class="co">#&gt; [185] fastmatch_1.1-3             bit_4.0.5</span></span></code></pre></div>
+</div>
+<div class="section level2 unnumbered">
+<h2 class="unnumbered" id="section-references">References<a class="anchor" aria-label="anchor" href="#section-references"></a>
+</h2>
+<div id="section-refs" class="references csl-bib-body" line-spacing="2">
+<div id="section-ref-loupebrowser" class="csl-entry">
+<div class="csl-left-margin">1. </div>
+<div class="csl-right-inline">What
+is loupe cell browser.</div>
+</div>
+<div id="section-ref-li2022cellxgene" class="csl-entry">
+<div class="csl-left-margin">2. </div>
+<div class="csl-right-inline">Li,
+K. <em>et al.</em> Cellxgene VIP unleashes full power of interactive
+visualization and integrative analysis of scRNA-seq, spatial
+transcriptomics, and multiome data. <em>bioRxiv</em> 2020–08
+(2022).</div>
+</div>
+<div id="section-ref-pereira2021asc" class="csl-entry">
+<div class="csl-left-margin">3. </div>
+<div class="csl-right-inline">Pereira, W. J. <em>et al.</em> Asc-seurat:
+Analytical single-cell seurat-based web application. <em>BMC
+bioinformatics</em> <strong>22,</strong> 1–14 (2021).</div>
+</div>
+<div id="section-ref-dimitrov2020bingleseq" class="csl-entry">
+<div class="csl-left-margin">4. </div>
+<div class="csl-right-inline">Dimitrov, D. &amp; Gu, Q. BingleSeq: A
+user-friendly r package for bulk and single-cell RNA-seq data analysis.
+<em>PeerJ</em> <strong>8,</strong> e10469 (2020).</div>
+</div>
+<div id="section-ref-bolisetty2017cellview" class="csl-entry">
+<div class="csl-left-margin">5. </div>
+<div class="csl-right-inline">Bolisetty, M. T., Stitzel, M. L. &amp; Robson,
+P. CellView: Interactive exploration of high dimensional single cell
+RNA-seq data. <em>bioRxiv</em> 123810 (2017).</div>
+</div>
+<div id="section-ref-prompsy2020interactive" class="csl-entry">
+<div class="csl-left-margin">6. </div>
+<div class="csl-right-inline">Prompsy, P. <em>et al.</em> Interactive
+analysis of single-cell epigenomic landscapes with ChromSCape.
+<em>Nature communications</em> <strong>11,</strong> 1–9 (2020).</div>
+</div>
+<div id="section-ref-zhu2017granatum" class="csl-entry">
+<div class="csl-left-margin">7. </div>
+<div class="csl-right-inline">Zhu,
+X. <em>et al.</em> Granatum: A graphical single-cell RNA-seq analysis
+pipeline for genomics scientists. <em>Genome medicine</em>
+<strong>9,</strong> 1–12 (2017).</div>
+</div>
+<div id="section-ref-interlandi2022intercellar" class="csl-entry">
+<div class="csl-left-margin">8. </div>
+<div class="csl-right-inline">Interlandi, M., Kerl, K. &amp; Dugas, M.
+InterCellar enables interactive analysis and exploration of cell- cell
+communication in single-cell transcriptomic data. <em>Communications
+biology</em> <strong>5,</strong> 1–13 (2022).</div>
+</div>
+<div id="section-ref-patel2018cellr" class="csl-entry">
+<div class="csl-left-margin">9. </div>
+<div class="csl-right-inline">Patel, M. V. iS-CellR: A user-friendly tool for
+analyzing and visualizing single-cell RNA sequencing data.
+<em>Bioinformatics</em> <strong>34,</strong> 4305–4306 (2018).</div>
+</div>
+<div id="section-ref-rue2018isee" class="csl-entry">
+<div class="csl-left-margin">10. </div>
+<div class="csl-right-inline">Rue-Albrecht, K., Marini, F., Soneson, C. &amp;
+Lun, A. T. iSEE: Interactive summarizedexperiment explorer.
+<em>F1000Research</em> <strong>7,</strong> (2018).</div>
+</div>
+<div id="section-ref-zhu2018pivot" class="csl-entry">
+<div class="csl-left-margin">11. </div>
+<div class="csl-right-inline">Zhu, Q. <em>et al.</em> PIVOT: Platform for
+interactive analysis and visualization of transcriptomics data. <em>BMC
+bioinformatics</em> <strong>19,</strong> 1–8 (2018).</div>
+</div>
+<div id="section-ref-moussa2021sc1" class="csl-entry">
+<div class="csl-left-margin">12. </div>
+<div class="csl-right-inline">Moussa, M. &amp; Măndoiu, I. I. SC1: A tool for
+interactive web-based single-cell RNA-seq data analysis. <em>Journal of
+Computational Biology</em> <strong>28,</strong> 820–841 (2021).</div>
+</div>
+<div id="section-ref-cai2022scanner" class="csl-entry">
+<div class="csl-left-margin">13. </div>
+<div class="csl-right-inline">Cai, G., Yu, X., Youn, C., Zhou, J. &amp; Xiao,
+F. SCANNER: A web platform for annotation, visualization and sharing of
+single cell RNA-seq data. <em>Database</em> <strong>2022,</strong>
+(2022).</div>
+</div>
+<div id="section-ref-innes2018scclustviz" class="csl-entry">
+<div class="csl-left-margin">14. </div>
+<div class="csl-right-inline">Innes, B. T. &amp; Bader, G. D.
+scClustViz–single-cell RNAseq cluster assessment and visualization.
+<em>F1000Research</em> <strong>7,</strong> (2018).</div>
+</div>
+<div id="section-ref-tabaka2019scsva" class="csl-entry">
+<div class="csl-left-margin">15. </div>
+<div class="csl-right-inline">Tabaka, M., Gould, J. &amp; Regev, A. scSVA: An
+interactive tool for big data visualization and exploration in
+single-cell omics. <em>BioRxiv</em> 512582 (2019).</div>
+</div>
+<div id="section-ref-yousif2020nasqar" class="csl-entry">
+<div class="csl-left-margin">16. </div>
+<div class="csl-right-inline">Yousif, A., Drou, N., Rowe, J., Khalfan, M.
+&amp; Gunsalus, K. C. NASQAR: A web-based platform for high-throughput
+sequencing data analysis and visualization. <em>Bmc Bioinformatics</em>
+<strong>21,</strong> 1–14 (2020).</div>
+</div>
+<div id="section-ref-sharma2022shinyarchr" class="csl-entry">
+<div class="csl-left-margin">17. </div>
+<div class="csl-right-inline">Sharma, A., Akshay, A., Rogne, M. &amp;
+Eskeland, R. ShinyArchR. UiO: User-friendly, integrative and open-source
+tool for visualization of single-cell ATAC-seq data using ArchR.
+<em>Bioinformatics</em> <strong>38,</strong> 834–836 (2022).</div>
+</div>
+<div id="section-ref-granja2021archr" class="csl-entry">
+<div class="csl-left-margin">18. </div>
+<div class="csl-right-inline">Granja, J. M. <em>et al.</em> ArchR is a
+scalable software package for integrative single-cell chromatin
+accessibility analysis. <em>Nature genetics</em> <strong>53,</strong>
+403–411 (2021).</div>
+</div>
+<div id="section-ref-ouyang2021shinycell" class="csl-entry">
+<div class="csl-left-margin">19. </div>
+<div class="csl-right-inline">Ouyang, J. F., Kamaraj, U. S., Cao, E. Y. &amp;
+Rackham, O. J. ShinyCell: Simple and sharable visualization of
+single-cell gene expression data. <em>Bioinformatics</em>
+<strong>37,</strong> 3374–3376 (2021).</div>
+</div>
+<div id="section-ref-hong2022comprehensive" class="csl-entry">
+<div class="csl-left-margin">20. </div>
+<div class="csl-right-inline">Hong, R. <em>et al.</em> Comprehensive
+generation, visualization, and reporting of quality control metrics for
+single-cell RNA sequencing data. <em>Nature communications</em>
+<strong>13,</strong> 1–9 (2022).</div>
+</div>
+<div id="section-ref-satija2015spatial" class="csl-entry">
+<div class="csl-left-margin">21. </div>
+<div class="csl-right-inline">Satija, R., Farrell, J. A., Gennert, D.,
+Schier, A. F. &amp; Regev, A. Spatial reconstruction of single-cell gene
+expression data. <em>Nature biotechnology</em> <strong>33,</strong>
+495–502 (2015).</div>
+</div>
+</div>
 </div>
 <div class="footnotes footnotes-end-of-document">
 <hr>
 <ol>
-<li id="fn1"><p><a href="mailto:jianhong.ou@duke.edu" class="email">jianhong.ou@duke.edu</a><a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="section-fn1"><p><a href="mailto:jianhong.ou@duke.edu" class="email">jianhong.ou@duke.edu</a><a href="#section-fnref1" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
   </div>
