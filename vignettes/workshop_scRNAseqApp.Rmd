@@ -1,11 +1,20 @@
 ---
 title: "Package demo for scRNAseqApp"
 author: Jianhong Ou^[jianhong.ou@duke.edu]
-output: rmarkdown::html_vignette
+bibliography: "`r system.file('vignettes', 'bibliography.bib', package = 'scRNAseqAppBioc2023Workshop')`"
+csl: "`r system.file('vignettes', 'nature.csl', package = 'scRNAseqAppBioc2023Workshop')`"
+output:
+  bookdown::html_document2:
+    theme: simplex
+    toc: true
+    toc_float: true
+    toc_depth: 4
+    fig_caption: true
 vignette: >
   %\VignetteIndexEntry{Package demo for scRNAseqApp}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+runtime: shiny
 ---
 
 
@@ -14,11 +23,360 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+library(pander)
+library(scRNAseqApp)
 ```
 
 
 ## Introduction
 
-Single-cell RNA sequencing (scRNA-seq) is a powerful technique to study gene expression, cellular heterogeneity, and cell states within samples in single-cell level. The development of scRNA-seq shed light to address the knowledge gap about the cell types, cell interactions, and key genes involved in biological process and their dynamics. To precisely meet the publishing requirement, reduce the time of communication the bioinformatician with researchers, and increase the re-usability and reproducibility of scientific findings, multiple interactive visualization tools were developed to provide the researchers access to the details of the data. Based on ShinyCell, the scRNAseqApp package is developed with multiple highly interactive visualizations of how cells and subsets of cells cluster behavior for scRNA-seq, scATAC-seq and sc-multiomics data. The end users can discover the expression of genes in multiple interactive manners with highly customized filter conditions by selecting metadata supplied with the publications and download the ready-to-use results for republishing.
+Single-cell RNA sequencing (scRNA-seq) is a powerful technique to study gene expression, cellular heterogeneity, and cell states within samples in single-cell level. The development of scRNA-seq shed light to address the knowledge gap about the cell types, cell interactions, and key genes involved in biological process and their dynamics. To precisely meet the publishing requirement, reduce the time of communication the bioinformatician with researchers, and increase the re-usability and reproducibility of scientific findings, multiple interactive visualization tools, such as Loupe Browser[@loupebrowser] and cellxgene[@li2022cellxgene], were developed to provide the researchers access to the details of the data. In R/Bioconductor, there are options to use the flexibility of the R-graphics system to display the status of single-cell.
 
+**Table 1: R/Bioconductor available tools for interactive scRNA-Seq data visualization. **
+```{r echo=FALSE, collapse=FALSE}
+software <- c("Asc-Seurat[@pereira2021asc]",
+              "BingleSeq[@dimitrov2020bingleseq]",
+              "[CellView[@bolisetty2017cellview]](https://mbolisetty.shinyapps.io/CellView/)",
+              "[ChromSCape[@prompsy2020interactive]](https://vallotlab.shinyapps.io/ChromSCape/)",
+              "[Granatum[@zhu2017granatum]](http://granatum.dcmb.med.umich.edu)",
+              "InterCellar[@interlandi2022intercellar]",
+              "iS-CellR[@patel2018cellr]",
+              "[iSEE[@rue2018isee]](https://marionilab.cruk.cam.ac.uk/iSEE_allen/)",
+              "PIVOT[@zhu2018pivot]",
+              "[SC1[@moussa2021sc1]](https://sc1.engr.uconn.edu/)",
+              "[SCANNER[@cai2022scanner]](https://www.thecailab.com/scanner/)",
+              "[scClustViz[@innes2018scclustviz]](https://innesbt.shinyapps.io/scclustvizdemoapp/)",
+              "scSVA[@tabaka2019scsva]",
+              "[SeuratV3Wizard[@yousif2020nasqar]/NASQAR](https://nasqar.abudhabi.nyu.edu/SeuratV3Wizard/)",
+              "[ShinyArchRUiO[@sharma2022shinyarchr]](https://cancell.medisin.uio.no/ShinyArchR.UiO/)",
+              "[ShinyCell[@ouyang2021shinycell]](http://shinycell1.ddnetbio.com/)",
+              "[singleCellTK[@hong2022comprehensive]](https://sctk.bu.edu/)")
+description <- c("Asc-Seurat, also known as Analytical single-cell Seurat-based web application, is a user-friendly web application built on the Shiny framework. Its name, pronounced as \"ask Seurat,\" reflects its purpose of simplifying scRNA-seq analysis. With a click-based interface and straightforward installation process, Asc-Seurat enables users to effortlessly execute all essential steps for scRNA-seq analysis. Moreover, it seamlessly incorporates the powerful features of Seurat and Dynverse, providing users with a comprehensive toolkit. Additionally, Asc-Seurat offers the convenient functionality of instant gene functional annotation using BioMart.",
+                 "BingleSeq was created as an intuitive application to offer a user-friendly solution for analyzing count matrices from both Bulk and Single-cell RNA-Seq experiments. BingleSeq goes beyond basic functionality and includes additional features like visualization techniques, comprehensive functional annotation analysis, and rank-based consensus for differential gene analysis results.",
+                 "CellView is designed to efficiently extract expression, dimensionality reduction/clustering, and feature annotation data objects from an .Rds file. It offers 3D visualization, (co-)expression pattern plots, and **on-the-fly differential gene expression analysis**.",
+                 "ChromSCape, an application designed for Single Cells **Chromatin landscape profiling**, offers a user-friendly and readily deployable Shiny Application. It is specifically tailored for the analysis of various single-cell epigenomics datasets such as scChIP-seq, scATAC-seq, scCUT&Tag, and more. ChromSCape provides a seamless workflow, starting from aligned data to differential analysis and gene set enrichment analysis.",
+                 "Granatum: a web-based scRNA-Seq analysis pipeline designed for accessible research. With a user-friendly graphical interface, users can navigate the pipeline effortlessly, adjusting parameters and visualizing results. Granatum guides users through diverse scRNA-Seq analysis steps, encompassing plate merging, batch-effect removal, outlier-sample removal, normalization, imputation, gene filtering, cell clustering, differential gene expression analysis, pathway/ontology enrichment analysis, protein network interaction visualization, and pseudo-time cell series construction.",
+                 "InterCellar empowers researchers to conduct interactive analysis of cell-cell communication results derived from scRNA-seq data. By utilizing **pre-computed ligand-receptor interactions**, InterCellar offers filtering options, annotations, and various visualizations to explore clusters, genes, and functions. Additionally, InterCellar leverages functional annotation from Gene Ontology and pathway databases, enabling data-driven analyses to investigate cell-cell communication in one or multiple conditions.",
+                 "iS-CellR, an Interactive platform for Single-cell RNAseq, is a web-based Shiny application that offers a comprehensive analysis of single-cell RNA sequencing data. It provides a rapid approach for filtering and normalizing raw data, performing dimensionality reductions (both linear and non-linear) to identify cell type clusters, conducting differential gene expression analysis to pinpoint markers, and exploring inter-/intra-sample heterogeneity. iS-CellR seamlessly integrates the Seurat package with Shiny's reactive programming framework and employs interactive visualization using the plotly library.",
+                 "iSEE is a package that offers an interactive user interface for data exploration within objects derived from the _SummarizedExperiment_ class. It specifically caters to single-cell data stored in the SingleCellExperiment derived class. The user interface is built using RStudio's Shiny framework and features a multi-panel layout for effortless navigation. iSEE is **the winners of [the 1st Shiny Contest](https://posit.co/blog/first-shiny-contest-winners/)**",
+                 "PIVOT offers comprehensive support for routine RNA-Seq data analysis. It includes essential functionalities such as normalization, differential expression analysis, dimension reduction, correlation analysis, clustering, and classification. With PIVOT, users can effortlessly complete workflows utilizing DESeq2, monocle, and scde packages with just a few clicks. Additionally, all analysis reports can be easily exported, and the program state can be saved, loaded, and shared for seamless collaboration.",
+                 "SC1 offers an integrated workflow for scRNA-Seq analysis, introducing a novel approach to selecting informative genes using **term-frequency inverse-document-frequency (TF-IDF)** scores. It encompasses various methods for clustering, differential expression analysis, gene enrichment, interactive visualization, and cell cycle analysis. Furthermore, the tool seamlessly integrates additional single-cell omics data modalities, such as T-cell receptor (TCR)-Seq, and supports multiple single-cell sequencing technologies. With its streamlined process, researchers can swiftly generate a comprehensive analysis and derive valuable insights from their scRNA-Seq data.",
+                 "SCANNER utilizes Seurat object, created through the Seurat pipeline, as its input. It leverages the Seurat 3.0 package to conduct various data analyses, including data normalization, high variable feature selection, data scaling, dimension reduction, and cluster identification.",
+                 "scClustViz is a user-friendly R Shiny tool to visualize clustering results from common single-cell RNAseq analysis pipelines. The tool serves two primary purposes: A) assisting in the selection of a biologically relevant resolution or K from clustering results by assessing differential expression between the resulting clusters, and B) facilitating cell type annotation and identification of marker genes.",
+                 "scSVA (single-cell Scalable Visualization and Analytics) is a highly optimized tool designed for efficient visualization of cells on 2D or 3D embeddings. It specializes in extracting cell features for visualization from compressed big expression matrices stored in HDF5, Loom, and text file formats. Utilizing VaeX as a powerful Python library for grid-based vector data processing and integrating Shiny for its user interface, scSVA delivers high-performance analytics. The tool enables basic statistical analysis, such as computing cell counts and distributions of gene expression values across selected or provided cell groups. Moreover, users can leverage scSVAtools to interactively run fast methods for diffusion maps and 3D force-directed layout embedding (FLE), further enhancing their analysis capabilities.",
+                 "NASQAR (Nucleic Acid SeQuence Analysis Resource) offers a user-friendly interface that enables users to conveniently and effectively explore their data interactively. It supports popular tools for diverse applications, including Transcriptome Data Preprocessing, RNAseq Analysis (including Single-cell RNAseq), Metagenomics, and Gene Enrichment.",
+                 "ShinyArchR.UiO, short for ShinyArchR User interface Open, provides an integrative environment for visualizing large-scale single-cell chromatin accessibility data (scATAC-seq). Built upon **ArchR[@granja2021archr]**, ShinyArchR.UiO offers a seamless and interactive experience for exploring and analyzing scATAC-seq datasets.",
+                 "ShinyCell is an R package that empowers users to develop interactive web applications based on Shiny for visualizing single-cell data. It offers a range of visualization options, including the ability to visualize cell information and gene expression on reduced dimensions like UMAP. Users can also explore the coexpression of two genes on reduced dimensions and visualize the distribution of continuous cell information, such as nUMI or module scores, using violin plots or box plots. ShinyCell further allows users to visualize the composition of different clusters or groups of cells using proportion plots and examine the expression of multiple genes using bubble plots or heatmaps.",
+                 "The singleCellTK R package provides the Single Cell Toolkit (SCTK) facilitates the importation of raw or filtered counts from various scRNAseq preprocessing tools like 10x CellRanger, BUStools, Optimus, STARSolo, and more. It incorporates publicly available R or Python tools to enable comprehensive quality control, including doublet detection and ambient RNA removal. SCTK integrates analysis workflows from popular tools such as Seurat and Bioconductor/OSCA into a unified framework, allowing users to perform diverse analyses. The results from these workflows can be summarized and shared conveniently using comprehensive HTML reports. Additionally, data can be exported to Seurat or AnnData object formats, enabling seamless integration with other downstream analysis workflows."
+                 )
+df <- data.frame(software=software, description=description)
+
+library(pander)
+panderOptions('table.alignment.default', function(df)
+    ifelse(sapply(df, is.numeric), 'right', 'left'))
+panderOptions('table.split.table', Inf)
+pander(df, style = 'rmarkdown')
+```
+
+Based on [_ShinyCell_](https://github.com/SGDDNB/ShinyCell), the _scRNAseqApp_ package is developed with multiple highly interactive visualizations of how cells and subsets of cells cluster behavior for scRNA-seq, scATAC-seq and sc-multiomics data. The _scRNAseqApp_ is designed to efficiently extract expression, dimensional reduction/clustering, and feature annotation data objects in multiple interactive manners with highly customized filter conditions by selecting metadata. It offers a user-friendly interface that facilitates the exploration and interactive analysis of single-cell transcriptomic, and multiomic data.
+
+Key features of _scRNAseqApp_ include:
+
+1. (Co-)Expression Patterns: Users can delve into expression patterns within specific clusters or among clusters, enabling a detailed examination of gene co-expression. It provides a three-dimensional visualization of the co-expression data, enhancing the understanding of the relationships between genes.
+
+2. Side-by-Side Data Visualization: The _scRNAseqApp_ allows for the simultaneous visualization of transcriptomic or multiomic data. Users can easily compare expression patterns, cell metadata, or chromatin accessibility across different subsets of cells, facilitating comprehensive data exploration.
+
+3. All-in-One Page Visualization: With the _scRNAseqApp_, users can visualize up to eight different types of figures on a single page. This consolidated view provides a comprehensive overview of the data, enhancing data interpretation and analysis.
+
+4. Search Tool for Datasets: The _scRNAseqApp_ includes a convenient search tool that enables users to search for specific expression patterns across all available datasets. The search results are presented as informative waffle plots, simplifying the identification and comparison of expression patterns.
+
+5. User Management System: To ensure data security and protect unpublished data, the _scRNAseqApp_ incorporates a user management system. This system controls access and permissions, allowing researchers to safeguard their valuable datasets.
+
+The _scRNAseqApp_ combines these features to provide a comprehensive and user-friendly platform for the analysis and exploration of single-cell transcriptomic and multiomic data, empowering researchers in their investigations.
+
+## Installation
+
+_BiocManager_ is used to install the released version of _scRNAseqApp_.
+
+```{r eval=FALSE}
+library(BiocManager)
+install("scRNAseqApp")
+```
+
+
+To check the current version of _scRNAseqApp_, please try
+
+```{r}
+packageVersion("scRNAseqApp")
+```
+
+## Quick guide for _scRNAseqApp_ with a subset of PBMC[@satija2015spatial] scRNA-Seq data
+
+The package includes a subset of PBMC sample data.
+To demonstrate the package, there are three simple and straightforward steps.
+
+### Step 1. Load library
+
+```{r load_library}
+library(scRNAseqApp)
+```
+
+### Step 2. Initial the database
+
+```{r init_app}
+publish_folder=tempdir()
+scInit(app_path=publish_folder)
+```
+
+### Step 3. Start shiny APP
+
+```{r start_app}
+scRNAseqApp(app_path = publish_folder)
+```
+
+## User management
+
+_scRNAseqApp_ bowrrow the power of _shinymanager_ package for user management.
+By default, the `scInit` function initial the root user name as "admin"
+protected with password "scRNAseqApp". You can change the root user name and 
+password when you run `scInit` or by `administrator mode` page in the shiny APP after
+login.
+
+![administrator mode page](`r system.file('vignettes', 'administrator_mode.jpg', package = 'scRNAseqAppBioc2023Workshop')`)
+
+### Protect the datasets
+
+To protect unpublished data, simply set the `LOCKER` parameter to TRUE when you
+create the dataset.
+
+```{r locker}
+pbmc_rds <- system.file("extdata", "pbmc_signac_sub.rds",
+                        package="scRNAseqAppBioc2023Workshop",
+                        mustWork = TRUE)
+pbmc <- readRDS(pbmc_rds)
+appconf <- createAppConfig(
+  title="pbmc small protected",
+  destinationFolder = "pbmc_protected",
+  species = "Homo sapiens",
+  doi="10.1038/nbt.3192",
+  datatype = "scRNAseq")
+createDataSet(appconf, pbmc, LOCKER = TRUE,
+              datafolder = file.path(publish_folder, "data"))
+dir(file.path(publish_folder, "data", "pbmc_protected"))
+scRNAseqApp(app_path = publish_folder)
+```
+
+Administrator can add or remove the protection in 
+the `EditData` tab of the `administrator mode` page.
+
+![change the protection status for a data](`r system.file('vignettes', 'change_the_status_protection.png', package = 'scRNAseqAppBioc2023Workshop')`)
+
+Then administrator can add or remove protected data for users in the `Home` tab
+of the `administrator mode` page.
+Please note that the different datasets are separated by ';'
+in the Privilege setting.
+
+![change the user privileges](`r system.file('vignettes', 'user_management.jpg', package = 'scRNAseqAppBioc2023Workshop')`)
+
+## Distribute to a shiny server
+
+There are two steps to distribute to a shiny server. First, install the package
+in the server as root user. Second, in a R session run `scInit()` after load 
+the `scRNAseqApp` library. If you initialed the app offline, copy the app folder
+to the shiny server.
+
+Note: the following files need to be writable for shiny: `www/database.sqlite`,
+`www/counter.tsv` and the app `www` folder should also be writable because the 
+user manager is depend on SQLite, and the SQLite needs to be able to 
+create a journal file in the same directory as the DB, 
+before any modifications can take place. 
+The journal is used to support transaction rollback.
+
+## Add additional data to the APP
+
+To add additional data to the APP, first prepare an preprocessed scRNA-Seq data,
+scATAC-Seq data or scMultiomic data. Then create a `appconf` object to
+include the basic information about the data. After that use `createDataSet` to
+add the data to publish folder.
+
+### Add preprocessed scRNA-Seq data in Seurat format
+
+```{r pbmc_seurat}
+appconf <- createAppConfig(
+  title="pbmc small CD4 subset",
+  destinationFolder = "pbmc_cd4",
+  species = "Homo sapiens",
+  doi="10.1038/nbt.3192",
+  datatype = "scRNAseq")
+createDataSet(appconf, pbmc, datafolder = file.path(publish_folder, "data"))
+dir(file.path(publish_folder, "data", "pbmc_cd4"))
+```
+
+### Add preprocessed scRNA-Seq data in annData format
+
+`annData` is the data format saved by most of the popular python based scRNA-seq
+analysis pipelines. You need to convert the `annData` into `Seurat` object first
+and then add the data into the APP. Here are some useful links for that:
+https://mojaveazure.github.io/seurat-disk/articles/convert-anndata.html
+https://github.com/cellgeni/sceasy
+
+### Add 10X genomics Chromium Single Cell Multiome ATAC + Gene Expression data
+
+```{r pbmc_10x}
+library(SeuratObject)
+appconf <- createAppConfig(
+  title="pbmc scMultiome",
+  destinationFolder = "pbmc_multiome",
+  species = "Homo sapiens",
+  doi="10.1038/nbt.3192",
+  datatype = "scMultiome")
+for(i in seq_along(pbmc@assays$peaks@fragments)){## patch the fragment path
+  pbmc@assays$peaks@fragments[[i]]@path <- 
+    file.path(dirname(pbmc_rds), pbmc@assays$peaks@fragments[[i]]@path)
+}
+createDataSet(appconf,
+              pbmc,
+              atacAssayName="peaks",
+              datafolder = file.path(publish_folder, "data"))
+dir(file.path(publish_folder, "data", "pbmc_multiome"))
+```
+
+### Add ArchR or Signac preprocessed scATAC-Seq data
+
+To add ArchR preprocessed data, the first step is to convert it into Signac like
+Seurat object.
+Here is the pseudo-code for adding a preprocessed scATAC-Seq data.
+
+```{r scATAC, eval=FALSE}
+library(ArchRtoSignac)
+packages <- c("ArchR","Seurat", "Signac","stringr") # required packages
+loadinglibrary(packages)
+fragments_dirs <- "path/to/fragments/"
+proj <- readRDS("path/to/Save-ArchR-Project.rds")
+## do this when you moved the Arrow files
+## skip it if you did not change the directory of your Arrow files.
+proj@sampleColData$ArrowFiles <- sub("previouse/dirname/to/ArrowFiles",
+                                     "current/dirname/to/ArrowFiles",
+                                     proj@sampleColData$ArrowFiles)
+proj@projectMetadata$outputDirectory <- "path/to/metadata/output/dir"
+pkm <- getPeakMatrix(proj) # proj is an ArchRProject
+getAvailableMatrices(proj)
+library(EnsDb.Mmusculus.v79) # if it is a mouse data (mm10)
+annotations <- getAnnotation(reference = EnsDb.Mmusculus.v79, refversion = "mm10")
+ArchR2Signac <- function (ArchRProject, refversion, samples = NULL, fragments_dir = NULL,
+          pm, fragments_fromcellranger = NULL, fragments_file_extension = NULL,
+          annotation, validate.fragments = FALSE){
+  if (is.null(samples)) {
+    samples <- unique(ArchRProject@cellColData$Sample)
+  }
+  if (fragments_fromcellranger == "YES" | fragments_fromcellranger ==
+      "Y" | fragments_fromcellranger == "Yes") {
+    print("In Progress:")
+    print("Prepare Seurat list for each sample")
+    output_dir = "/outs/"
+    seurat_list <- lapply(samples, function(cur_sample) {
+      print(cur_sample)
+      cur_fragments <- ifelse(is.list(fragments_dir), paste0(fragments_dir[[which(samples ==
+                                                                                    cur_sample)]], output_dir, "fragments.tsv.gz"),
+                              paste0(fragments_dir, cur_sample, output_dir,
+                                     "fragments.tsv.gz"))
+      cur_pm <- pm[, grepl(paste0(cur_sample, "#"), colnames(pm))]
+      cur_meta <- ArchRProject@cellColData %>% as.data.frame %>%
+        subset(Sample == cur_sample)
+      colnames(cur_pm) <- do.call(rbind, str_split(colnames(cur_pm),
+                                                   "#"))[, 2]
+      rownames(cur_meta) <- do.call(rbind, str_split(rownames(cur_meta),
+                                                     "#"))[, 2]
+      print(dim(cur_pm))
+      cur_chromatin <- Signac::CreateChromatinAssay(counts = cur_pm,
+                                                    sep = c("-", "-"), fragments = cur_fragments,
+                                                    ranges = ArchRProject@peakSet, genome = refversion,
+                                                    annotation = annotation)
+      cur_atac <- Seurat::CreateSeuratObject(cur_chromatin,
+                                             assay = "peaks", meta.data = cur_meta, )
+    })
+  }
+  if (fragments_fromcellranger == "NO" | fragments_fromcellranger ==
+      "N" | fragments_fromcellranger == "No") {
+    print("IF selecting NO, please make sure to provide fragments_file_extension")
+    print("In Progress:")
+    print("Prepare Seurat list for each sample")
+    seurat_list <- lapply(samples, function(cur_sample) {
+      print(cur_sample)
+      cur_fragments <- ifelse(is.list(fragments_dir), paste0(fragments_dir[[which(samples ==
+                                                                                    cur_sample)]], fragments_file_extension), paste0(fragments_dir,
+                                                                                                                                     cur_sample, fragments_file_extension))
+      cur_pm <- pm[, grepl(paste0(cur_sample, "#"), colnames(pm))]
+      cur_meta <- ArchRProject@cellColData %>% as.data.frame %>%
+        subset(Sample == cur_sample)
+      colnames(cur_pm) <- do.call(rbind, str_split(colnames(cur_pm),
+                                                   "#"))[, 2]
+      rownames(cur_meta) <- do.call(rbind, str_split(rownames(cur_meta),
+                                                     "#"))[, 2]
+      print(dim(cur_pm))
+      cur_chromatin <- Signac::CreateChromatinAssay(counts = cur_pm,
+                                                    sep = c("-", "-"), fragments = cur_fragments,
+                                                    ranges = ArchRProject@peakSet, genome = refversion,
+                                                    annotation = annotation,
+                                                    validate.fragments = validate.fragments)
+      cur_atac <- Seurat::CreateSeuratObject(cur_chromatin,
+                                             assay = "peaks", meta.data = cur_meta, )
+    })
+  }
+  print("In Progress:")
+  print("Merge Seurat list")
+  SeuratObject <- merge(x = seurat_list[[1]], y = seurat_list[2:length(seurat_list)],
+                        add.cell.ids = samples)
+  print("Return SeuratObject")
+  SeuratObject
+}
+
+seurat_atac <- ArchR2Signac(
+  ArchRProject = proj,
+  refversion = "mm10",
+  #samples = samplelist, # list of samples in the ArchRProject (default will use ArchRProject@cellColData$Sample but another list can be provided)
+  fragments_dir = fragments_dirs,
+  pm = pkm, # peak matrix from getPeakMatrix()
+  fragments_fromcellranger = "No", # fragments_fromcellranger This is an Yes or No selection ("NO" | "N" | "No" or "YES" | "Y" | "Yes")
+  fragments_file_extension = ".tsv.gz", # Default - NULL: File_Extension for fragments files (typically they should be '.tsv.gz' or '.fragments.tsv.gz')
+  annotation = annotations # annotation from getAnnotation()
+)
+
+gsm <- getGeneScoreMatrix(ArchRProject = proj, SeuratObject = seurat_atac)
+
+seurat_atac[['RNA']] <- CreateAssayObject(counts = gsm)
+
+seurat_atac <- addDimRed(
+  ArchRProject = proj,
+  SeuratObject = seurat_atac,
+  addUMAPs = "UMAP",
+  reducedDims = "IterativeLSI"
+) # default is "IterativeLSI"
+
+#add both 'Harmony' and ‘IterativeLSI’:
+seurat_atac <- addTwoDimRed(
+  ArchRProject = proj,
+  SeuratObject = seurat_atac,
+  addUMAPs = "UMAP",
+  reducedDims1 = "IterativeLSI",
+  # Please limit your reducedDims to one of the following: IterativeLSI, IterativeLSI2 or Harmony
+  reducedDims2 = "Harmony" # IterativeLSI2 or Harmony
+)
+appconf <- createAppConfig(
+       title="scATACseq example",
+       destinationFolder = "scATACseq_exp",
+       species = "Mus musculus",
+       datatype = "scATAC")
+createDataSet(appconf, seurat_atac, atacAssayName="peaks", file.path(publish_folder, "data"))
+
+scRNAseqApp()
+```
+
+## SessionInfo
+
+```{r sessioninfo}
+sessionInfo()
+```
+
+## References
 

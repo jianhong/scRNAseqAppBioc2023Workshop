@@ -1,3 +1,6 @@
 inst/doc
 *~
 .Rproj.user
+README.Rmd
+.Rhistory
+*.Rproj

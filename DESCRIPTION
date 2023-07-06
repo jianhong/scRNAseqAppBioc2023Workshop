@@ -32,7 +32,10 @@ Depends:
 Suggests: 
     knitr,
     rmarkdown,
-    pkgdown
+    pkgdown,
+    bookdown,
+    pander,
+    SeuratObject
 URL: https://jianhong.github.io/scRNAseqAppBioc2023Workshop/
 BugReports: https://github.com/jianhong/scRNAseqAppBioc2023Workshop/issues/new/choose
 VignetteBuilder: knitr
