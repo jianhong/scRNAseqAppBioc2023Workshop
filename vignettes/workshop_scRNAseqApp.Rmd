@@ -202,12 +202,10 @@ add the data to publish folder.
 ### Add preprocessed scRNA-Seq data in Seurat format
 
 ```{r pbmc_seurat}
-appconf <- createAppConfig(
-  title="pbmc small CD4 subset",
-  destinationFolder = "pbmc_cd4",
-  species = "Homo sapiens",
-  doi="10.1038/nbt.3192",
-  datatype = "scRNAseq")
+# just modify the appconf we created in previous step
+# the data will write to folder bpmc_cd4 with title 'bpmc small CD4 subset'
+appconf$title <- "pbmc small CD4 subset"
+appconf$id <- "pbmc_cd4"
 createDataSet(appconf, pbmc, datafolder = file.path(publish_folder, "data"))
 dir(file.path(publish_folder, "data", "pbmc_cd4"))
 ```
@@ -224,12 +222,9 @@ https://github.com/cellgeni/sceasy
 
 ```{r pbmc_10x}
 library(SeuratObject)
-appconf <- createAppConfig(
-  title="pbmc scMultiome",
-  destinationFolder = "pbmc_multiome",
-  species = "Homo sapiens",
-  doi="10.1038/nbt.3192",
-  datatype = "scMultiome")
+appconf$title <- "pbmc scMultiome"
+appconf$id <- "pbmc_multiome"
+appconf$type <- "scMultiome"
 for(i in seq_along(pbmc@assays$peaks@fragments)){## patch the fragment path
   pbmc@assays$peaks@fragments[[i]]@path <- 
     file.path(dirname(pbmc_rds), pbmc@assays$peaks@fragments[[i]]@path)
