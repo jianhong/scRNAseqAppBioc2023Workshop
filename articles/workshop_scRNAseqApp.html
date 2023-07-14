@@ -394,20 +394,170 @@ package, there are three simple and straightforward steps.</p>
 </h3>
 <div class="sourceCode" id="section-cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/scRNAseqApp/man/scRNAseqApp.html" class="external-link">scRNAseqApp</a></span><span class="op">(</span>app_path <span class="op">=</span> <span class="va">publish_folder</span><span class="op">)</span></span></code></pre></div>
-<iframe data-deferred-src="app20e693dafeb7be14d8c18fa256732859/?w=&amp;__subapp__=1" width="100%" height="400" class="shiny-frame shiny-frame-deferred"></iframe>
+<iframe data-deferred-src="app816b90da909bcba671a13c8dc0256d4d/?w=&amp;__subapp__=1" width="100%" height="400" class="shiny-frame shiny-frame-deferred"></iframe>
+</div>
+</div>
+<div class="section level2">
+<h2 id="section-shiny-pages">Shiny pages<a class="anchor" aria-label="anchor" href="#section-shiny-pages"></a>
+</h2>
+<p>The homepage showcases a streamlined search bar with a minimalist
+design. Conducting a keyword search will generate a list of results with
+hyperlinks, while searching by gene symbols will display waffle plots
+for each dataset. The waffle plots demonstrate the proportion of cell
+numbers compared to the largest cell group and use a heatmap to indicate
+expression levels. These waffle plots are also accessible in the ‘stats’
+module, offering an interactive mode.</p>
+<div class="figure" style="text-align: center">
+<img src="images/homepage.png" alt="Home page." width="90%" height="90%"><p class="caption">
+Home page.
+</p>
+</div>
+<p>To facilitate data visualization, we have developed four primary
+modules:</p>
+<ul>
+<li>side-by-side plots of cell information and gene expression,</li>
+<li>co-expression plots,</li>
+<li>statistical plots,</li>
+<li>and an explorer for multiple combination plots.</li>
+</ul>
+<p>Each module comprises a main panel and a plot panel. In the main
+panel, users can subset cells and control plot parameters, while the
+plot panel is used to visualize the data, present statistical tables,
+and offer a download button.</p>
+<p>Here is a short video for the web pages:</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/_4OH2nim5mY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
+</iframe>
+<div class="section level3">
+<h3 id="section-side-by-side-plots-of-cell-information-and-gene-expression">Side-by-side plots of cell information and gene expression<a class="anchor" aria-label="anchor" href="#section-side-by-side-plots-of-cell-information-and-gene-expression"></a>
+</h3>
+<p>The exploration of expression profiles side by side is facilitated
+through four sub-modules:</p>
+<ol style="list-style-type: decimal">
+<li>cell information vs. gene expression,
+<div class="figure" style="text-align: center">
+<img src="images/gene_info_expr.png" alt="Cell information vs. gene expression" width="90%" height="90%"><p class="caption">
+Cell information vs. gene expression
+</p>
+</div>
+</li>
+<li>cell information vs. cell information,
+<div class="figure" style="text-align: center">
+<img src="images/cell_info_info.png" alt="Cell information vs. cell information" width="90%" height="90%"><p class="caption">
+Cell information vs. cell information
+</p>
+</div>
+</li>
+<li>gene expression for different subsets of cells,
+<div class="figure" style="text-align: center">
+<img src="images/sub_gene_expr.png" alt="Subset gene expression" width="90%" height="90%"><p class="caption">
+Subset gene expression
+</p>
+</div>
+</li>
+<li>and gene accessibility vs. gene expression.
+<div class="figure" style="text-align: center">
+<img src="images/gene_acc_expr.png" alt="Multiome plots" width="90%" height="90%"><p class="caption">
+Multiome plots
+</p>
+</div>
+</li>
+</ol>
+<p>The cell information refers to the metadata associated with each
+cell. The gene expression data can be visualized using dots plots
+(default) or ridge plots by adjusting the plot controls. Users have the
+flexibility to manually set the maximum expression value, enabling the
+comparison of plots across different genes.</p>
+</div>
+<div class="section level3">
+<h3 id="section-co-expression-plots">Co-expression plots<a class="anchor" aria-label="anchor" href="#section-co-expression-plots"></a>
+</h3>
+<p>To explore the co-expression of two or several genes, there are four
+sub-modules available:</p>
+<ol style="list-style-type: decimal">
+<li>gene expression vs. gene expression,
+<div class="figure" style="text-align: center">
+<img src="images/gene_expr_expr.png" alt="Gene expression vs. expression" width="90%" height="90%"><p class="caption">
+Gene expression vs. expression
+</p>
+</div>
+</li>
+<li>gene co-expression plot,
+<div class="figure" style="text-align: center">
+<img src="images/gene_co_expr_2d.png" alt="Co-expression" width="90%" height="90%"><p class="caption">
+Co-expression
+</p>
+</div>
+</li>
+<li>3-dim gene co-expression plot,
+<div class="figure" style="text-align: center">
+<img src="images/gene_co_expr_3d.png" alt="Co-expression 3D plot" width="90%" height="90%"><p class="caption">
+Co-expression 3D plot
+</p>
+</div>
+</li>
+<li>and sunburst plot.
+<div class="figure" style="text-align: center">
+<img src="images/gene_expr_sunburst.png" alt="Sunburst plot" width="90%" height="90%"><p class="caption">
+Sunburst plot
+</p>
+</div>
+</li>
+</ol>
+<p>In the gene expression vs. gene expression sub-module, the gene
+expression levels are plotted side by side. The gene co-expression plots
+showcase the relative expression levels in a 2D or 3D heatmap format.
+The sunburst plot, on the other hand, enables the visualization of
+expression levels for more than two genes simultaneously.</p>
+</div>
+<div class="section level3">
+<h3 id="section-statistical-plots">Statistical plots<a class="anchor" aria-label="anchor" href="#section-statistical-plots"></a>
+</h3>
+The sub-modules of statistical plots offer a range of visualization
+options, including violin plots, box plots, proportion plots, bubble
+plots, heatmaps, and waffle plots.
+<div class="figure" style="text-align: center">
+<img src="images/gene_expr_walffle.png" alt="Waffle plot" width="90%" height="90%"><p class="caption">
+Waffle plot
+</p>
+</div>
+<p>Within the bubble plot and heatmap sub-module, users have the
+flexibility to visualize multiple genes across multiple layers, with the
+option to select violin plots as the plot type. Users can exercise
+control over various plot parameters, such as changing the order of
+samples or contents, adjusting the color scheme, and modifying point
+sizes, among others.</p>
+</div>
+<div class="section level3">
+<h3 id="section-explorer-for-multiple-combination-plots">Explorer for multiple combination plots<a class="anchor" aria-label="anchor" href="#section-explorer-for-multiple-combination-plots"></a>
+</h3>
+<p>The Explorer module offers the ability to combine multiple plots
+within a single page, providing increased flexibility for conducting
+multiple comparisons. Users can select the module type and click the
+‘NEW MODULE’ button to add a plot. The sub-plot modules consist of three
+regions:</p>
+<ol style="list-style-type: decimal">
+<li>Icons: These icons allow users to remove a plot, move it down, move
+it up, and toggle between full width and half width of the window.</li>
+<li>Major Information Dropdown List: This dropdown list provides
+essential information for the plots.</li>
+<li>Detailed Plot Controllers: These icons offer more specific plot
+control options.</li>
+</ol>
+<p>Users can explore up to eight plots within the module, allowing for a
+comprehensive analysis within a single interface.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="section-user-management">User management<a class="anchor" aria-label="anchor" href="#section-user-management"></a>
 </h2>
-<p><em>scRNAseqApp</em> bowrrow the power of <em>shinymanager</em>
+<p><em>scRNAseqApp</em> borrow the power of <em>shinymanager</em>
 package for user management. By default, the <code>scInit</code>
 function initial the root user name as “admin” protected with password
 “scRNAseqApp”. You can change the root user name and password when you
 run <code>scInit</code> or by <code>administrator mode</code> page in
-the shiny APP after login.</p>
+the shiny APP after log in.</p>
 <div class="figure" style="text-align: center">
-<img src="images/administrator_mode.jpg" alt="Administrator mode page." width="80%" height="80%"><p class="caption">
+<img src="images/administrator_mode.jpg" alt="Administrator mode page." width="90%" height="90%"><p class="caption">
 Administrator mode page.
 </p>
 </div>
@@ -452,12 +602,12 @@ parameter to TRUE when you create the dataset.</p>
 <span><span class="co">#&gt; [1] "appconf.rds" "LOCKER"      "markers.rds" "sc1conf.rds" "sc1def.rds" </span></span>
 <span><span class="co">#&gt; [6] "sc1gene.rds" "sc1gexpr.h5" "sc1meta.rds"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/scRNAseqApp/man/scRNAseqApp.html" class="external-link">scRNAseqApp</a></span><span class="op">(</span>app_path <span class="op">=</span> <span class="va">publish_folder</span><span class="op">)</span></span></code></pre></div>
-<iframe data-deferred-src="app5163f713d1dca547e64eeb9776b96f3e/?w=&amp;__subapp__=1" width="100%" height="400" class="shiny-frame shiny-frame-deferred"></iframe>
+<iframe data-deferred-src="app2ab89b07e43bc66025ab4852a98fd378/?w=&amp;__subapp__=1" width="100%" height="400" class="shiny-frame shiny-frame-deferred"></iframe>
 <p>Administrator can add or remove the protection in the
 <code>EditData</code> tab of the <code>administrator mode</code>
 page.</p>
 <div class="figure" style="text-align: center">
-<img src="images/change_the_status_protection.png" alt="Change the protection status for a data." width="80%" height="80%"><p class="caption">
+<img src="images/change_the_status_protection.png" alt="Change the protection status for a data." width="90%" height="90%"><p class="caption">
 Change the protection status for a data.
 </p>
 </div>
@@ -466,7 +616,7 @@ Change the protection status for a data.
 Please note that the different datasets are separated by ‘;’ in the
 Privilege setting.</p>
 <div class="figure" style="text-align: center">
-<img src="images/user_management.jpg" alt="Change the user privileges." width="80%" height="80%"><p class="caption">
+<img src="images/user_management.jpg" alt="Change the user privileges." width="90%" height="90%"><p class="caption">
 Change the user privileges.
 </p>
 </div>
