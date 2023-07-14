@@ -138,15 +138,135 @@ scInit(app_path=publish_folder)
 scRNAseqApp(app_path = publish_folder)
 ```
 
+## Shiny pages
+
+The homepage showcases a streamlined search bar with a minimalist design.
+Conducting a keyword search will generate a list of results with hyperlinks,
+while searching by gene symbols will display waffle plots for each dataset.
+The waffle plots demonstrate the proportion of cell numbers compared to the
+largest cell group and use a heatmap to indicate expression levels.
+These waffle plots are also accessible in the 'stats' module,
+offering an interactive mode.
+
+```{r, out.width ='90%', out.height ='90%', fig.align='center', fig.cap='Home page.', echo = FALSE}
+knitr::include_graphics(file.path('images', 'homepage.png'))
+```
+
+To facilitate data visualization, we have developed four primary modules:
+
+- side-by-side plots of cell information and gene expression,
+- co-expression plots,
+- statistical plots,
+- and an explorer for multiple combination plots.
+
+Each module comprises a main panel and a plot panel.
+In the main panel, users can subset cells and control plot parameters,
+while the plot panel is used to visualize the data, present statistical tables,
+and offer a download button.
+
+Here is a short video for the web pages:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/_4OH2nim5mY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+### Side-by-side plots of cell information and gene expression
+
+The exploration of expression profiles side by side is facilitated through
+four sub-modules:
+
+1. cell information vs. gene expression,
+```{r, out.width ='90%', out.height ='90%', fig.align='center', fig.cap='Cell information vs. gene expression', echo = FALSE}
+knitr::include_graphics(file.path('images', 'gene_info_expr.png'))
+```
+2. cell information vs. cell information,
+```{r, out.width ='90%', out.height ='90%', fig.align='center', fig.cap='Cell information vs. cell information', echo = FALSE}
+knitr::include_graphics(file.path('images', 'cell_info_info.png'))
+```
+3. gene expression for different subsets of cells,
+```{r, out.width ='90%', out.height ='90%', fig.align='center', fig.cap='Subset gene expression', echo = FALSE}
+knitr::include_graphics(file.path('images', 'sub_gene_expr.png'))
+```
+4. and gene accessibility vs. gene expression.
+```{r, out.width ='90%', out.height ='90%', fig.align='center', fig.cap='Multiome plots', echo = FALSE}
+knitr::include_graphics(file.path('images', 'gene_acc_expr.png'))
+```
+
+The cell information refers to the metadata associated with each cell.
+The gene expression data can be visualized using dots plots (default) or
+ridge plots by adjusting the plot controls.
+Users have the flexibility to manually set the maximum expression value,
+enabling the comparison of plots across different genes.
+
+
+### Co-expression plots
+To explore the co-expression of two or several genes,
+there are four sub-modules available:
+
+1. gene expression vs. gene expression,
+```{r, out.width ='90%', out.height ='90%', fig.align='center', fig.cap='Gene expression vs. expression', echo = FALSE}
+knitr::include_graphics(file.path('images', 'gene_expr_expr.png'))
+```
+2. gene co-expression plot,
+```{r, out.width ='90%', out.height ='90%', fig.align='center', fig.cap='Co-expression', echo = FALSE}
+knitr::include_graphics(file.path('images', 'gene_co_expr_2d.png'))
+```
+3. 3-dim gene co-expression plot,
+```{r, out.width ='90%', out.height ='90%', fig.align='center', fig.cap='Co-expression 3D plot', echo = FALSE}
+knitr::include_graphics(file.path('images', 'gene_co_expr_3d.png'))
+```
+4. and sunburst plot.
+```{r, out.width ='90%', out.height ='90%', fig.align='center', fig.cap='Sunburst plot', echo = FALSE}
+knitr::include_graphics(file.path('images', 'gene_expr_sunburst.png'))
+```
+
+In the gene expression vs. gene expression sub-module,
+the gene expression levels are plotted side by side.
+The gene co-expression plots showcase the relative expression levels
+in a 2D or 3D heatmap format.
+The sunburst plot, on the other hand, enables the visualization of 
+expression levels for more than two genes simultaneously.
+
+### Statistical plots
+
+The sub-modules of statistical plots offer a range of visualization options,
+including violin plots, box plots, proportion plots, bubble plots, heatmaps,
+and waffle plots.
+```{r, out.width ='90%', out.height ='90%', fig.align='center', fig.cap='Waffle plot', echo = FALSE}
+knitr::include_graphics(file.path('images', 'gene_expr_walffle.png'))
+```
+Within the bubble plot and heatmap sub-module, users have the flexibility to
+visualize multiple genes across multiple layers,
+with the option to select violin plots as the plot type.
+Users can exercise control over various plot parameters,
+such as changing the order of samples or contents,
+adjusting the color scheme, and modifying point sizes, among others.
+
+### Explorer for multiple combination plots
+
+The Explorer module offers the ability to combine multiple plots within
+a single page, providing increased flexibility for conducting multiple
+comparisons.
+Users can select the module type and click the 'NEW MODULE' button to
+add a plot. The sub-plot modules consist of three regions: 
+
+1. Icons: These icons allow users to remove a plot, move it down, move it up,
+and toggle between full width and half width of the window.
+2. Major Information Dropdown List: This dropdown list provides essential
+information for the plots.
+3. Detailed Plot Controllers: These icons offer more specific plot
+control options.
+
+Users can explore up to eight plots within the module,
+allowing for a comprehensive analysis within a single interface.
+
 ## User management
 
-_scRNAseqApp_ bowrrow the power of _shinymanager_ package for user management.
+_scRNAseqApp_ borrow the power of _shinymanager_ package for user management.
 By default, the `scInit` function initial the root user name as "admin"
 protected with password "scRNAseqApp". You can change the root user name and 
 password when you run `scInit` or by `administrator mode` page in the shiny APP after
-login.
+log in.
 
-```{r, out.width ='80%', out.height ='80%', fig.align='center', fig.cap='Administrator mode page.', echo = FALSE}
+```{r, out.width ='90%', out.height ='90%', fig.align='center', fig.cap='Administrator mode page.', echo = FALSE}
 knitr::include_graphics(file.path('images', 'administrator_mode.jpg'))
 ```
 
@@ -175,7 +295,7 @@ scRNAseqApp(app_path = publish_folder)
 Administrator can add or remove the protection in 
 the `EditData` tab of the `administrator mode` page.
 
-```{r, out.width ='80%', out.height ='80%', fig.align='center', fig.cap='Change the protection status for a data.', echo = FALSE}
+```{r, out.width ='90%', out.height ='90%', fig.align='center', fig.cap='Change the protection status for a data.', echo = FALSE}
 knitr::include_graphics(file.path('images', 'change_the_status_protection.png'))
 ```
 
@@ -184,7 +304,7 @@ of the `administrator mode` page.
 Please note that the different datasets are separated by ';'
 in the Privilege setting.
 
-```{r, out.width ='80%', out.height ='80%', fig.align='center', fig.cap='Change the user privileges.', echo = FALSE}
+```{r, out.width ='90%', out.height ='90%', fig.align='center', fig.cap='Change the user privileges.', echo = FALSE}
 knitr::include_graphics(file.path('images', 'user_management.jpg'))
 ```
 
